@@ -1,0 +1,99 @@
+body {
+  overflow: hidden;
+}
+.login {
+  display: flex;
+  height: 100vh;
+  background-color: #f5f5f5;
+}
+
+.left-side, .right-side {
+  width: 50%;
+  position: relative;
+}
+
+.logo {
+  position: absolute;
+  top: 30px;
+  left: 30px;
+  width: 140px;
+}
+
+.bg-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.buttons{
+  width: 135px;
+  padding: 13px;
+  margin-top: 5px;
+  margin-left: 600px;
+  background-color: transparent;
+}
+.buttons button{
+  width: 60px;
+  padding: 8px;
+  border-radius: 5px;
+  border: none;
+  background-color: transparent;
+
+}
+.buttons #login{
+  margin-left: 13px;
+}
+.buttons #signup.active, .buttons #login.active {
+  background-color: #1B48DA;
+  color: #ffff;
+}
+
+.right-side h1{
+  margin-top: 100px;
+  font-size: 1.7rem;
+  margin-bottom: 80px;
+  margin-left: 174px;
+  width: 420px;
+  font-weight: 500;
+}
+.login__container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: top;
+  height: 100%;
+}
+
+.login__container input {
+  width: 100%;
+  width: 400px;
+  padding: 12px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.login__signInButton {
+  margin-bottom: 20px;
+  width: 426px;
+  padding: 12px;
+  border: none;
+  color: #ffff;
+  background-color: #1B48DA;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 700;
+}
+.login__registerButton{
+  margin-top: -2px;
+  font-weight: 500;
+}
+.login__registerButton span{
+  color: #451ce9;
+  cursor: pointer;
+}
+
+#signup-head{
+  margin-bottom: -1px;
+  margin-bottom: 40px;
+}
