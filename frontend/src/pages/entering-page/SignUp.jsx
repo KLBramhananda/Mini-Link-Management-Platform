@@ -15,7 +15,11 @@ const Signup = () => {
   const [error, setError] = useState("");
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.id]: e.target.value });
+    const { id, value } = e.target;
+    if (id === "phone" && !/^\d*$/.test(value)) {
+      return; // Only allow numbers in the phone field
+    }
+    setFormData({ ...formData, [id]: value });
   };
 
   const axiosInstance = axios.create({
@@ -25,9 +29,14 @@ const Signup = () => {
       'Content-Type': 'application/json'
     }
   });
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+
     try {
       const response = await axiosInstance.post('/users/register', {
         username: formData.username,
@@ -91,6 +100,7 @@ const Signup = () => {
               type="tel"
               placeholder="Mobile no."
               required
+              value={formData.phone}
               onChange={handleChange}
             />
             <br />
