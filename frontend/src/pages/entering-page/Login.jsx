@@ -1,9 +1,33 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import "./login.css";
 
 const Login = () => {
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
   const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.id]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await axios.post("http://localhost:3000/api/users/login", {
+        email: formData.email,
+        password: formData.password,
+      });
+      localStorage.setItem("token", response.data.token);
+      navigate("/dashboard");
+    } catch (error) {
+      alert("Error logging in");
+    }
+  };
 
   return (
     <div className="login">
@@ -29,12 +53,13 @@ const Login = () => {
         </div>
         <h1>Login</h1>
         <div className="login__container">
-          <form>
+          <form onSubmit={handleSubmit}>
             <input
               id="email"
               type="email"
               placeholder="Email id"
               required
+              onChange={handleChange}
             />
             <br />
             <input
@@ -42,9 +67,10 @@ const Login = () => {
               type="password"
               placeholder="Password"
               required
+              onChange={handleChange}
             />
             <br />
-            <button className="login__signInButton">Login</button>
+            <button className="login__signInButton" type="submit">Login</button>
           </form>
           <h5 className="login__registerButton">
             Don't have an account?{" "}
