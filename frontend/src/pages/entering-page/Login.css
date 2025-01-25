@@ -38,7 +38,7 @@ body {
   border-radius: 5px;
   border: none;
   background-color: transparent;
-
+  cursor: pointer;
 }
 .buttons #login{
   margin-left: 13px;
@@ -96,4 +96,35 @@ body {
 #signup-head{
   margin-bottom: -1px;
   margin-bottom: 40px;
+}
+
+/* Media query for mobile and tablet devices */
+@media (max-width: 1024px) {
+  .left-side {
+    display: none;
+  }
+  .right-side {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .buttons {
+    margin-left: 5px;
+    text-align: center;
+  }
+  .right-side h1 {
+    margin-left: 0;
+    width: 100%;
+    text-align: center;
+  }
+  .login__container {
+    width: 100%;
+    align-items: center;
+  }
+  .login__container input, .login__signInButton {
+    width: 100%;
+    align-items: center;
+  }
 }
