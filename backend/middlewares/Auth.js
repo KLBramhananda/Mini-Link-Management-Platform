@@ -1,19 +1,26 @@
 const jwt = require('jsonwebtoken');
 
+const SECRET_KEY = 'bramha143'; // Replace with a strong, unique secret key
+
 const authMiddleware = (req, res, next) => {
-  const token = req.header('Authorization').replace('Bearer ', '');
+  const token = req.header('Authorization')?.replace('Bearer ', '');
 
   if (!token) {
-    return res.status(401).send({ error: 'Access denied. No token provided.' });
+    return res.status(401).json({ message: 'No token, authorization denied' });
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, SECRET_KEY);
     req.user = decoded;
     next();
-  } catch (ex) {
-    res.status(400).send({ error: 'Invalid token.' });
+  } catch (error) {
+    res.status(401).json({ message: 'Token is not valid' });
   }
 };
 
-module.exports = authMiddleware;
+
+
+module.exports = {
+  authMiddleware,
+  SECRET_KEY
+};

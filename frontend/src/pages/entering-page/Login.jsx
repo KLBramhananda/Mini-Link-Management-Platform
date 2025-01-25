@@ -8,6 +8,7 @@ const Login = () => {
     email: "",
     password: "",
   });
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -15,20 +16,29 @@ const Login = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-
+    e.preventDefault(); // Prevent default form submission
     try {
-      const response = await axios.post("http://localhost:3000/api/users/login", {
-        email: formData.email,
-        password: formData.password,
-      });
-      localStorage.setItem("token", response.data.token);
-      navigate("/dashboard");
+      const response = await axios.post(
+        "http://localhost:5000/api/users/login", // Corrected to login endpoint
+        {
+          email: formData.email,
+          password: formData.password
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      // Store token and navigate to dashboard
+      localStorage.setItem('token', response.data.token);
+      navigate('/dashboard');
     } catch (error) {
-      alert("Error logging in");
+      console.error('Login Error:', error.response?.data);
+      setError(error.response?.data?.error || "Login failed");
     }
   };
-
   return (
     <div className="login">
       <div className="left-side">
@@ -70,6 +80,7 @@ const Login = () => {
               onChange={handleChange}
             />
             <br />
+            {error && <p style={{ color: 'red' }}>{error}</p>}
             <button className="login__signInButton" type="submit">Login</button>
           </form>
           <h5 className="login__registerButton">

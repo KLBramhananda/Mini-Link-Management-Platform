@@ -5,113 +5,46 @@ import "./login.css";
 
 const Signup = () => {
   const navigate = useNavigate();
-  const [user, setUser] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [formData, setFormData] = useState({
+    username: "",
+    email: "",
+    phone: "",
+    password: "",
+    confirmPassword: "",
+  });
   const [error, setError] = useState("");
 
-  const maskPassword = (password) => {
-    return password.replace(/./g, "*");
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
-  const handleGoBack = () => {
-    navigate("/login");
-  };
-
-  const handleUserChange = (event) => {
-    setUser(event.target.value);
-  };
-
-  const handleEmailChange = (event) => {
-    setEmail(event.target.value);
-  };
-
-  const handlePhoneChange = (event) => {
-    const value = event.target.value;
-    if (/^\d*$/.test(value)) {
-      setPhone(value);
+  const axiosInstance = axios.create({
+    baseURL: 'http://localhost:5000/api', // Backend port
+    timeout: 5000,
+    headers: {
+      'Content-Type': 'application/json'
     }
-  };
-
-  const handlePasswordChange = (event) => {
-    setPassword(event.target.value);
-  };
-
-  const handleConfirmPasswordChange = (event) => {
-    setConfirmPassword(event.target.value);
-
-    if (event.target.value !== password) {
-      setError("Enter the same password in both fields");
-    } else {
-      setError("");
-    }
-  };
-
-  const handleSignUp = async () => {
-    if (!user || user.trim() === "") {
-      setError("Username is required");
-      return;
-    }
-
-    if (!email || email.trim() === "") {
-      setError("Email is required");
-      return;
-    }
-
-    if (!email.includes("@") || !email.includes(".com")) {
-      setError("Invalid email format");
-      return;
-    }
-
-    if (!phone || phone.trim() === "") {
-      setError("Phone number is required");
-      return;
-    }
-
-    if (!password || password.trim() === "") {
-      setError("Password is required");
-      return;
-    }
-
-    if (!confirmPassword || confirmPassword.trim() === "") {
-      setError("Please confirm your password");
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      setError("Passwords do not match");
-      return;
-    }
-
+  });
+  
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     try {
-      const response = await axios.post(
-        `http://localhost:3000/api/users/register`,
-        {
-          username: user,
-          email,
-          phone,
-          password,
-        }
-      );
-
-      if (response.status === 201) {
-        localStorage.setItem(
-          "userData",
-          JSON.stringify({
-            username: user,
-            email: email,
-          })
-        );
-
-        navigate("/dashboard");
-      }
+      const response = await axiosInstance.post('/users/register', {
+        username: formData.username,
+        email: formData.email,
+        phone: formData.phone,
+        password: formData.password
+      });
+      
+      console.log('Registration Response:', response.data);
+      localStorage.setItem('token', response.data.token);
+      navigate('/dashboard');
     } catch (error) {
-      setError(
-        error.response?.data?.message ||
-          "An error occurred during signup. Please try again."
-      );
+      console.error('Registration Error:', {
+        response: error.response,
+        message: error.message
+      });
+      setError(error.response?.data?.error || 'Registration failed');
     }
   };
 
@@ -130,34 +63,61 @@ const Signup = () => {
           >
             SignUp
           </button>
-          <button
-            id="login"
-            onClick={() => navigate("/")}
-          >
+          <button id="login" onClick={() => navigate("/")}>
             Login
           </button>
         </div>
         <h1 id="signup-head">Join us Today!</h1>
         <div className="login__container">
-          <form onSubmit={(e) => e.preventDefault()}>
-            <input id="username" type="text" placeholder="Name" required onChange={handleUserChange} />
+          <form onSubmit={handleSubmit}>
+            <input
+              id="username"
+              type="text"
+              placeholder="Name"
+              required
+              onChange={handleChange}
+            />
             <br />
-            <input id="email" type="email" placeholder="Email id" required onChange={handleEmailChange} />
+            <input
+              id="email"
+              type="email"
+              placeholder="Email id"
+              required
+              onChange={handleChange}
+            />
             <br />
-            <input id="phone" type="tel" placeholder="Mobile no." required value={phone} onChange={handlePhoneChange} />
+            <input
+              id="phone"
+              type="tel"
+              placeholder="Mobile no."
+              required
+              onChange={handleChange}
+            />
             <br />
-            <input id="password" type="password" placeholder="Password" required onChange={handlePasswordChange} />
+            <input
+              id="password"
+              type="password"
+              placeholder="Password"
+              required
+              onChange={handleChange}
+            />
             <br />
-            <input id="confirm-password" type="password" placeholder="Confirm Password" required onChange={handleConfirmPasswordChange} />
+            <input
+              id="confirmPassword"
+              type="password"
+              placeholder="Confirm Password"
+              required
+              onChange={handleChange}
+            />
             <br />
-            {error && <p style={{ color: 'red' }}>{error}</p>}
-            <button className="login__signInButton" type="button" onClick={handleSignUp}>Register</button>
+            {error && <p style={{ color: "red" }}>{error}</p>}
+            <button className="login__signInButton" type="submit">
+              Register
+            </button>
           </form>
           <h5 className="login__registerButton">
             Already have an account?{" "}
-            <span onClick={() => navigate("/")}>
-              Login
-            </span>
+            <span onClick={() => navigate("/")}>Login</span>
           </h5>
         </div>
       </div>
