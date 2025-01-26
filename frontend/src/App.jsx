@@ -1,11 +1,11 @@
+import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Login from "./pages/entering-page/login";
 import Signup from "./pages/entering-page/signup";
+import MainLayout from './components/MainLayout';
 import Dashboard from './components/dashboard-page/Dashboard';
 import Links from './components/links-page/Links';
 import Analytics from './components/analytics-page/Analytics';
-import MainLayout from './components/MainLayout';
-
 
 function App() {
   return (
