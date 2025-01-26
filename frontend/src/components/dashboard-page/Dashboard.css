@@ -70,6 +70,7 @@ body {
 .search img{
   margin-right: 10px;
   margin-left: 0;
+  cursor: pointer;
 }
 .search input{
   flex: 1;

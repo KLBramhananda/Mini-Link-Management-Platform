@@ -30,7 +30,14 @@
   color: white;
   padding: 10px;
 }
+.create-link-header h2{
+  margin-left: 12px;
+}
+.create-link-header img {
+  cursor: pointer;
+  margin-right: 19px;
 
+}
 .create-link-body {
   padding-left: 20px;
 }
