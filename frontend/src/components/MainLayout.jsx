@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import './dashboard-page/Dashboard.css';
+import CreateLink from './Create-link';
 
 const MainLayout = () => {
   const [greeting, setGreeting] = useState("Good Morning");
   const [showLogout, setShowLogout] = useState(false);
+  const [showCreateLink, setShowCreateLink] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -24,6 +26,14 @@ const MainLayout = () => {
     navigate(`/dashboard/${path}`);
   };
 
+  const handleCreateNewClick = () => {
+    setShowCreateLink(true);
+  };
+
+  const handleCloseCreateLink = () => {
+    setShowCreateLink(false);
+  };
+
   return (
     <div className="dashboard-container">
       <img className="logo" src="/assets/logo.png" alt="app-logo" />
@@ -33,7 +43,7 @@ const MainLayout = () => {
           <span className="dashboard-date">Tue, Jan 25</span>
         </p>
 
-        <button className="create-new">
+        <button className="create-new" onClick={handleCreateNewClick}>
           <span>
             <img src="/assets/plus.png" alt="" /> Create new
           </span>
@@ -91,6 +101,14 @@ const MainLayout = () => {
           <Outlet />
         </main>
       </div>
+
+      {showCreateLink && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <CreateLink onClose={handleCloseCreateLink} />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

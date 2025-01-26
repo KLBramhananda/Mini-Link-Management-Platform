@@ -1,0 +1,103 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+
+}
+
+.modal-content {
+  background: #fff;
+  border-radius: 8px;
+  width: 33%;
+  height: 80%;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.create-link-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  background-color: #3B3C51;
+  height: 30px;
+  color: white;
+  padding: 10px;
+}
+
+.create-link-body {
+  padding-left: 20px;
+}
+.create-link-body .label-text{
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.create-link-body span{
+  color: red;
+}
+
+.create-link-body input {
+  margin-top: 10px;
+  padding: 10px;
+}
+.create-link-body textarea {
+  margin-top: 10px;
+  padding: 10px;
+  height: 100px;
+}
+
+.create-link-body input[type="url"],
+.create-link-body textarea,
+.create-link-body input[type="date"] {
+  width: 90%;
+  margin-bottom: 20px;
+  border: 2px solid #eeecec;
+  border-radius: 5px;
+}
+.create-link-body textarea{
+  height: 100px;
+}
+.expiration-toggle label{
+  font-weight: bold;
+
+}
+.expiration-toggle .expiration-checkbox{
+  margin-left: 330px;
+}
+.expiration-toggle .date-time{
+  width:90%;
+}
+
+.create-link-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 117px;
+  padding: 10px;
+  background-color: #dcdcdd;
+  border-radius: 5px;
+}
+.create-link-footer .clear-btn{
+  background-color: transparent;
+  font-weight: bold;
+  color: black;
+  border: none;
+  border-radius: 1px;
+  padding: 10px 10px;
+  cursor: pointer;
+}
+.create-link-footer .create-btn{
+  background-color: #1B48DA;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+}
