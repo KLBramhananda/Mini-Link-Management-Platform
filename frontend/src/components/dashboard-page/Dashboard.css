@@ -50,6 +50,8 @@ body {
   border-radius: 8px;
   padding: 5px 15px;
   cursor: pointer;
+  height: 45px;
+
 }
 
 .create-new img{
@@ -60,6 +62,7 @@ body {
   align-items: center;
   margin-left: 30px;
   width: 330px;
+  height: 30px;
   border-radius: 10px;
   border: 2px solid #eeecec;
   padding: 5px 10px;
@@ -70,11 +73,41 @@ body {
 }
 .search input{
   flex: 1;
-  height: 20px;
+  height: 20px !important;
   border: none;
   outline: none;
   padding: 5px;
   border-radius: 10px;
+}
+
+.user-profile {
+  position: relative;
+  margin-left: 30px;
+  margin-top: 8px;
+}
+
+.user-profile button.user-initials {
+  width: 45px;
+  height: 45px;
+  margin-top: -10px;
+  border-radius: 50%;
+  background-color: #FDE48A;
+  border: none;
+  cursor: pointer;
+}
+
+.user-profile button.logout-button {
+  position: absolute;
+  top: 45px;
+  left: -130px;
+  width: 160px;
+  background-color: #ffff;
+  color: rgb(120, 120, 120);
+  border: none;
+  border-radius: 8px;
+  border: 2px solid #eeecec;
+  padding: 12px;
+  cursor: pointer;
 }
 
 .dashboard-main {
@@ -124,35 +157,6 @@ body {
 .settings img{
   margin-bottom: -3px;
   margin-right: 5px;
-}
-.user-profile {
-  position: relative;
-  margin-left: 30px;
-  margin-top: 10px;
-}
-
-.user-profile button.user-initials {
-  width: 50px;
-  height: 50px;
-  margin-top: -10px;
-  border-radius: 50%;
-  background-color: #FDE48A;
-  border: none;
-  cursor: pointer;
-}
-
-.user-profile button.logout-button {
-  position: absolute;
-  top: 45px;
-  left: -130px;
-  width: 160px;
-  background-color: #ffff;
-  color: rgb(120, 120, 120);
-  border: none;
-  border-radius: 8px;
-  border: 2px solid #eeecec;
-  padding: 15px;
-  cursor: pointer;
 }
 
 .content {
@@ -229,7 +233,7 @@ body {
   flex: 3;
   display: inline-block;
   height: 8px;
-  background-color: #1890ff;
+  background-color: #1B48DA;
   margin: 0 8px;
   vertical-align: middle;
 }
@@ -241,8 +245,8 @@ body {
 
 .bar {
   display: inline-block;
-  height: 8px;
-  background-color: #1890ff;
+  height: 10px !important;
+  background-color: #1B48DA;
   margin-right: 8px;
   vertical-align: middle;
 }
