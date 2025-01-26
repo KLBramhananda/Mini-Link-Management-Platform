@@ -16,7 +16,7 @@ const Login = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevent default form submission
+    e.preventDefault();
     try {
       const response = await axios.post(
         "http://localhost:5000/api/users/login", // Corrected to login endpoint
@@ -39,6 +39,12 @@ const Login = () => {
       setError(error.response?.data?.error || "Login failed");
     }
   };
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    navigate('/');
+  };
+
   return (
     <div className="login">
       <div className="left-side">
@@ -59,6 +65,12 @@ const Login = () => {
             onClick={() => navigate("/")}
           >
             Login
+          </button>
+          <button
+            id="logout"
+            onClick={handleLogout}
+          >
+            Logout
           </button>
         </div>
         <h1>Login</h1>

@@ -17,7 +17,7 @@ const Signup = () => {
   const handleChange = (e) => {
     const { id, value } = e.target;
     if (id === "phone" && !/^\d*$/.test(value)) {
-      return; // Only allow numbers in the phone field
+      return; // Only allow numbers
     }
     setFormData({ ...formData, [id]: value });
   };

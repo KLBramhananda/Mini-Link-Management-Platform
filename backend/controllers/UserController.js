@@ -6,10 +6,30 @@ const { SECRET_KEY } = require("../middlewares/Auth");
 exports.register = async (req, res) => {
   const { username, email, phone, password } = req.body;
 
+  if (!username || !email || !phone || !password) {
+    return res.status(400).json({
+      error: "All fields are required",
+      missingFields: {
+        username: !username,
+        email: !email,
+        phone: !phone,
+        password: !password,
+      },
+    });
+  }
+
   try {
-    const existingUser = await User.findOne({ $or: [{ email }, { username }] });
+    const existingUser = await User.findOne({
+      $or: [{ email }, { username }],
+    });
+
     if (existingUser) {
-      return res.status(400).json({ error: "User already exists" });
+      return res.status(400).json({
+        error:
+          existingUser.email === email
+            ? "Email already exists"
+            : "Username already exists",
+      });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -19,7 +39,17 @@ exports.register = async (req, res) => {
       phone,
       password: hashedPassword,
     });
-    await newUser.save();
+
+    // save logging
+    await newUser
+      .save()
+      .then((savedUser) => {
+        console.log("User saved successfully:", savedUser);
+      })
+      .catch((saveError) => {
+        console.error("Save Error:", saveError);
+        throw saveError;
+      });
 
     const token = jwt.sign({ id: newUser._id }, SECRET_KEY, {
       expiresIn: "1h",
@@ -28,11 +58,27 @@ exports.register = async (req, res) => {
     res.status(201).json({
       message: "User registered successfully",
       token,
-      user: { id: newUser._id, username, email },
+      userId: newUser._id,
     });
   } catch (error) {
-    console.error("Registration error:", error);
-    res.status(500).json({ error: "Server error during registration" });
+    console.error("Full Registration Error:", {
+      message: error.message,
+      stack: error.stack,
+      name: error.name,
+    });
+
+    //  error handling
+    if (error.name === "ValidationError") {
+      return res.status(400).json({
+        error: "Validation failed",
+        details: error.errors,
+      });
+    }
+
+    res.status(500).json({
+      error: "Server error during registration",
+      details: error.message,
+    });
   }
 };
 
