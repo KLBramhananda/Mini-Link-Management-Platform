@@ -2,6 +2,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const userRoutes = require('./routes/UserRoutes');
+const linkRoutes = require('./routes/LinkRoutes');
+const Link = require('./models/Link'); // Import the Link model
 require('dotenv').config();
 
 const app = express();
@@ -34,6 +36,27 @@ app.get('/', (req, res) => {
 
 // User routes
 app.use('/api/users', userRoutes);
+
+// Link routes
+app.use('/api/links', linkRoutes);
+
+// Handle short URL redirection
+app.get('/:shortUrl', async (req, res) => {
+  try {
+    const shortUrl = `https://short.ly/${req.params.shortUrl}`;
+    const link = await Link.findOne({ shortLink: shortUrl });
+    if (!link) {
+      return res.status(404).send('This URL is no more working :(');
+    }
+    if (link.expirationDate && new Date(link.expirationDate) < new Date()) {
+      return res.status(410).send('This URL is no more working :(');
+    }
+    res.redirect(link.originalLink);
+  } catch (error) {
+    console.error('Redirection Error:', error);
+    res.status(500).send('Server error during redirection');
+  }
+});
 
 // Start the server
 app.listen(port, () => {

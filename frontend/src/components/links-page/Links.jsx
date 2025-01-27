@@ -1,4 +1,5 @@
 import React, { useState, useEffect, forwardRef, useImperativeHandle } from "react";
+import axios from "axios";
 import "./Links.css";
 import CreateLink from "../Create-link";
 
@@ -9,6 +10,7 @@ const Links = forwardRef((props, ref) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
   const [showCopyModal, setShowCopyModal] = useState(false);
+  const username = localStorage.getItem('username') || '';
 
   useImperativeHandle(ref, () => ({
     addNewLink: handleCreateLink
@@ -40,7 +42,12 @@ const Links = forwardRef((props, ref) => {
     return new Date(date).toLocaleString('en-US', options);
   };
 
-  const handleCreateLink = (linkData) => {
+  useEffect(() => {
+    const storedLinks = JSON.parse(localStorage.getItem(`${username}_links`)) || [];
+    setLinks(storedLinks);
+  }, [username]);
+
+  const handleCreateLink = async (linkData) => {
     const newLink = {
       id: Date.now(),
       date: formatDateTime(new Date()),
@@ -53,7 +60,15 @@ const Links = forwardRef((props, ref) => {
         : "Active",
       expirationDate: linkData.expirationDate
     };
-    setLinks(prevLinks => [newLink, ...prevLinks]);
+
+    try {
+      await axios.post('http://localhost:5000/api/links/create', newLink);
+      const updatedLinks = [newLink, ...links];
+      setLinks(updatedLinks);
+      localStorage.setItem(`${username}_links`, JSON.stringify(updatedLinks));
+    } catch (error) {
+      console.error('Link Creation Error:', error);
+    }
   };
 
   const handleEdit = (link) => {
@@ -70,12 +85,14 @@ const Links = forwardRef((props, ref) => {
   };
 
   const confirmDelete = () => {
-    setLinks(links.filter(link => link.id !== deleteId));
+    const updatedLinks = links.filter(link => link.id !== deleteId);
+    setLinks(updatedLinks);
+    localStorage.setItem(`${username}_links`, JSON.stringify(updatedLinks));
     setShowDeleteModal(false);
   };
 
   const handleUpdate = (updatedData) => {
-    setLinks(links.map(link => 
+    const updatedLinks = links.map(link => 
       link.id === editingLink.id 
         ? {
             ...link,
@@ -87,7 +104,9 @@ const Links = forwardRef((props, ref) => {
               : "Active"
           }
         : link
-    ));
+    );
+    setLinks(updatedLinks);
+    localStorage.setItem(`${username}_links`, JSON.stringify(updatedLinks));
     setShowCreateLink(false);
     setEditingLink(null);
   };

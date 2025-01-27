@@ -47,6 +47,7 @@ const Signup = () => {
       
       console.log('Registration Response:', response.data);
       localStorage.setItem('token', response.data.token);
+      localStorage.setItem('username', formData.username);
       navigate('/dashboard');
     } catch (error) {
       console.error('Registration Error:', {

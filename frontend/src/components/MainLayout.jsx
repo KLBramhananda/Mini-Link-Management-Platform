@@ -8,6 +8,8 @@ const MainLayout = () => {
   const [greeting, setGreeting] = useState("Good Morning");
   const [showLogout, setShowLogout] = useState(false);
   const [showCreateLink, setShowCreateLink] = useState(false);
+  const [username, setUsername] = useState(localStorage.getItem('username') || '');
+  const [links, setLinks] = useState([]);
   const linksRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
@@ -17,10 +19,14 @@ const MainLayout = () => {
     if (hour < 12) setGreeting("Good morning");
     else if (hour < 18) setGreeting("Good afternoon");
     else setGreeting("Good evening");
-  }, []);
+
+    const storedLinks = JSON.parse(localStorage.getItem(`${username}_links`)) || [];
+    setLinks(storedLinks);
+  }, [username]);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("username");
     navigate("/");
   };
 
@@ -32,6 +38,19 @@ const MainLayout = () => {
     if (linksRef.current && linksRef.current.addNewLink) {
       linksRef.current.addNewLink(linkData);
     }
+    const newLink = {
+      id: Date.now(),
+      date: new Date().toLocaleString(),
+      originalLink: linkData.destinationUrl,
+      shortLink: "https://short.ly/" + Math.random().toString(36).substr(2, 6),
+      remarks: linkData.remarks,
+      clicks: 0,
+      status: "Active",
+      expirationDate: linkData.expirationDate
+    };
+    const updatedLinks = [newLink, ...links];
+    setLinks(updatedLinks);
+    localStorage.setItem(`${username}_links`, JSON.stringify(updatedLinks));
     setShowCreateLink(false);
   };
 
@@ -43,12 +62,14 @@ const MainLayout = () => {
     setShowCreateLink(true);
   };
 
+  const userInitials = username ? username.slice(0, 2).toUpperCase() : 'BR';
+
   return (
     <div className="dashboard-container">
       <img className="logo" src="/assets/logo.png" alt="app-logo" />
       <header className="dashboard-header">
         <p className="dashboard-title">
-          <img src="/assets/climate.png" alt="" /> {greeting}, Bramha <br />
+          <img src="/assets/climate.png" alt="" /> {greeting}, {username} <br />
           <span className="dashboard-date">Tue, Jan 25</span>
         </p>
 
@@ -71,7 +92,7 @@ const MainLayout = () => {
             className="user-initials"
             onClick={() => setShowLogout(!showLogout)}
           >
-            BR
+            {userInitials}
           </button>
           {showLogout && (
             <button className="logout-button" onClick={handleLogout}>
