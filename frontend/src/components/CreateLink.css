@@ -16,7 +16,7 @@
   background: #fff;
   border-radius: 8px;
   width: 33%;
-  height: 80%;
+  height: 85%;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
@@ -76,17 +76,50 @@
 
 }
 .expiration-toggle .expiration-checkbox{
-  margin-left: 330px;
+  margin-left: 295px;
 }
 .expiration-toggle .date-time{
   width:90%;
+}
+
+.expiration-toggle .expiration-checkbox {
+  position: relative;
+  width: 50px;
+  height: 25px;
+  -webkit-appearance: none;
+  background: #c6c6c6;
+  outline: none;
+  border-radius: 25px;
+  transition: background 0.3s;
+  cursor: pointer;
+  margin-bottom: -3px;
+}
+
+.expiration-toggle .expiration-checkbox:checked {
+  background: #1B48DA;
+}
+
+.expiration-toggle .expiration-checkbox:before {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  top: 2.5px;
+  left: 2.5px;
+  background: white;
+  transition: transform 0.3s;
+}
+
+.expiration-toggle .expiration-checkbox:checked:before {
+  transform: translateX(25px);
 }
 
 .create-link-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 117px;
+  margin-top: 153px;
   padding: 10px;
   background-color: #dcdcdd;
   border-radius: 5px;
@@ -107,4 +140,15 @@
   border-radius: 5px;
   padding: 10px 20px;
   cursor: pointer;
+}
+
+.error-message {
+  color: red;
+  font-size: 12px;
+  margin-top: -15px;
+  font-weight: normal;
+}
+
+.error-input {
+  border-color: red;
 }

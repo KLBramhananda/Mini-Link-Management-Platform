@@ -7,14 +7,31 @@ const CreateLink = ({ onClose }) => {
   const [remarks, setRemarks] = useState("");
   const [linkExpiration, setLinkExpiration] = useState(true);
   const [expirationDate, setExpirationDate] = useState("");
+  const [errors, setErrors] = useState({ destinationUrl: "", remarks: "" });
 
   useEffect(() => {
     setExpirationDate(getCurrentDateTime());
   }, []);
 
   const handleCreate = () => {
-    console.log({ destinationUrl, remarks, linkExpiration, expirationDate });
-    onClose();
+    let hasError = false;
+    let newErrors = { destinationUrl: "", remarks: "" };
+
+    if (!destinationUrl) {
+      newErrors.destinationUrl = "This feild is mandatory";
+      hasError = true;
+    }
+    if (!remarks) {
+      newErrors.remarks = "This feild is mandatory";
+      hasError = true;
+    }
+
+    setErrors(newErrors);
+
+    if (!hasError) {
+      console.log({ destinationUrl, remarks, linkExpiration, expirationDate });
+      onClose();
+    }
   };
 
   const handleClear = () => {
@@ -26,7 +43,9 @@ const CreateLink = ({ onClose }) => {
 
   const getCurrentDateTime = () => {
     const today = new Date();
-    return today.toISOString().slice(0, 16);
+    const offset = today.getTimezoneOffset();
+    const localDate = new Date(today.getTime() - (offset * 60 * 1000));
+    return localDate.toISOString().slice(0, 16);
   };
 
   const handleExpirationChange = (checked) => {
@@ -53,7 +72,9 @@ const CreateLink = ({ onClose }) => {
             onChange={(e) => setDestinationUrl(e.target.value)}
             placeholder="https://enter-your-destination-url.com/"
             required
+            className={errors.destinationUrl ? "error-input" : ""}
           />
+          {errors.destinationUrl && <div className="error-message">{errors.destinationUrl}</div>}
         </label><br />
         <label className="label-text">
           Remarks <span className="required">*</span><br />
@@ -62,7 +83,9 @@ const CreateLink = ({ onClose }) => {
             onChange={(e) => setRemarks(e.target.value)}
             placeholder="Add remarks"
             required
+            className={errors.remarks ? "error-input" : ""}
           ></textarea>
+          {errors.remarks && <div className="error-message">{errors.remarks}</div>}
         </label>
         <div className="expiration-toggle">
           <label>
