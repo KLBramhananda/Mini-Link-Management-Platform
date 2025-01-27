@@ -76,7 +76,7 @@ const CreateLink = ({ onClose, onSubmit, initialData, isEditMode }) => {
   return (
     <div className="create-link-container">
       <div className="create-link-header">
-        <h2>{isEditMode ? "Edit Link" : "New Link"}</h2>
+        <h3>{isEditMode ? "Edit Link" : "New Link"}</h3>
         <img className="close-btn" onClick={onClose} src="/assets/cancel.png" alt="Close" />
       </div>
       <div className="create-link-body">
@@ -125,7 +125,7 @@ const CreateLink = ({ onClose, onSubmit, initialData, isEditMode }) => {
       <div className="create-link-footer">
         <button className="clear-btn" onClick={handleClear}>Clear</button>
         <button className="create-btn" onClick={handleCreateOrUpdate}>
-          {isEditMode ? "Save" : "Create Link"}
+          {isEditMode ? "Save" : "Create new"}
         </button>
       </div>
     </div>

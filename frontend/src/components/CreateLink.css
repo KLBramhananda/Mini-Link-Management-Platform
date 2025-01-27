@@ -30,7 +30,7 @@
   color: white;
   padding: 10px;
 }
-.create-link-header h2{
+.create-link-header h3{
   margin-left: 12px;
 }
 .create-link-header img {
@@ -80,6 +80,8 @@
 }
 .expiration-toggle .date-time{
   width:90%;
+  border-radius: 5px;
+  border: 2px solid #eeecec;
 }
 
 .expiration-toggle .expiration-checkbox {

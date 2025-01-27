@@ -211,7 +211,7 @@ const Links = forwardRef((props, ref) => {
 
       {showCopyModal && (
         <div className="copy-modal">
-          <img src="/assets/copy-icon-blue.png" alt="Copy Icon" />
+          <img src="/assets/copy-link.png" alt="Copy Icon" />
           <span>Link Copied</span>
         </div>
       )}
