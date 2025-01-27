@@ -1,24 +1,16 @@
 import React from 'react';
 
 const Dashboard = () => {
-  const dateWiseClicks = [
-    { date: "21-01-25", count: 34 },
-    { date: "20-01-25", count: 40 },
-    { date: "19-01-25", count: 13 },
-  ].sort((a, b) => new Date(b.date) - new Date(a.date));
-
-  const clickDevices = [
-    { device: "Mobile", count: 34 },
-    { device: "Desktop", count: 40 },
-    { device: "Tablet", count: 3 },
-  ];
+  const dateWiseClicks = []; // Initially empty
+  const clickDevices = []; // Initially empty
+  const totalClicks = 0; // Initially zero
 
   const maxCount = 100;
 
   return (
     <>
       <div className="total-clicks">
-        <h2>Total Clicks <span>1234</span></h2>
+        <h2>Total Clicks <span>{totalClicks}</span></h2>
       </div>
       <div className="charts">
         <div className="chart date-wise">
