@@ -1,10 +1,18 @@
 /* Links.css */
 
+.links-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
 .links-container {
+  flex: 1;
   margin: 20px;
   background-color: #F3F7FD;
   padding: 0px !important;
   border-radius: 5px;
+  overflow: auto; /* Enable scrolling */
 }
 
 .links-table {
@@ -20,7 +28,7 @@
   text-align: left;
   padding: 12px;
   border-bottom: 1px solid #f0f0f0;
-  width: 200px; /* Adjust width for 6 columns, excluding the "Clicks" column */
+  width: 220px; /* Adjust width for 6 columns, excluding the "Clicks" column */
 }
 
 .links-table th.clicks,
@@ -35,9 +43,13 @@
   font-weight: 600;
   padding-left: 0;
   padding-right: 0;
+  position: sticky; /* Make the header sticky */
+  top: 0; /* Stick to the top */
+  background-color: #F3F7FD; /* Match the background color */
+  z-index: 1; /* Ensure it stays above the table body */
 }
 
-.links-table th img{
+.links-table th img {
   margin-bottom: -5px;
   margin-left: 20px;
 }
@@ -72,9 +84,12 @@
 }
 
 .links-table tbody tr td .copy-button {
+  position: absolute; /* Position the copy button absolutely */
+  right: 10px; /* Fix it to the right side */
+  top: 50%;
+  transform: translateY(-50%);
   display: inline-block;
   vertical-align: middle;
-  margin-left: 9px;
 }
 
 .links-table tbody tr td .copy-button img {
