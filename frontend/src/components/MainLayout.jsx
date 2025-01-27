@@ -73,18 +73,21 @@ const MainLayout = () => {
         <aside className="sidebar">
           <ul className="menu">
             <li 
-              className={`menu-item ${location.pathname === '/dashboard' ? 'active' : ''}`}
+              key="dashboard"
+              className={`menu-item ${location.pathname === '/dashboard' || location.pathname === '/dashboard/' ? 'active' : ''}`}
               onClick={() => handleMenuClick('')}
             >
               <img src="/assets/dashboard-icon.png" alt="" /> Dashboard
             </li>
             <li 
+              key="links"
               className={`menu-item ${location.pathname === '/dashboard/links' ? 'active' : ''}`}
               onClick={() => handleMenuClick('links')}
             >
               <img src="/assets/links-page-icons/link-icon.png" alt="" /> Links
             </li>
             <li 
+              key="analytics"
               className={`menu-item ${location.pathname === '/dashboard/analytics' ? 'active' : ''}`}
               onClick={() => handleMenuClick('analytics')}
             >
@@ -92,6 +95,7 @@ const MainLayout = () => {
             </li>
           </ul>
           <div 
+            key="settings"
             className={`settings ${location.pathname === '/dashboard/settings' ? 'active' : ''}`}
             onClick={() => handleMenuClick('settings')}
           >
