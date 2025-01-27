@@ -91,7 +91,10 @@ const MainLayout = () => {
               <img src="/assets/analystics-icon.png" alt="" /> Analytics
             </li>
           </ul>
-          <div className="settings">
+          <div 
+            className={`settings ${location.pathname === '/dashboard/settings' ? 'active' : ''}`}
+            onClick={() => handleMenuClick('settings')}
+          >
             <p>
               <img src="/assets/settings.icon.png" alt="" /> Settings
             </p>

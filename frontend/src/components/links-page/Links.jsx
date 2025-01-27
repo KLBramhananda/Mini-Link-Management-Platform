@@ -9,11 +9,13 @@ const Links = () => {
       <table className="links-table">
         <thead>
           <tr>
-            <th>Date</th>
+            <th>Date <img src="/assets/links-page-icons/dropdown.png" alt="option" /></th>
             <th>Original Link</th>
             <th>Short Link</th>
-            <th>ip address</th>
-            <th>User Device</th>
+            <th>Remarks</th>
+            <th>Clicks</th>
+            <th>Status <img src="/assets/links-page-icons/dropdown.png" alt="option" /></th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>

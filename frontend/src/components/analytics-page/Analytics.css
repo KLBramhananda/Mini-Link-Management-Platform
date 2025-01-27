@@ -1,0 +1,77 @@
+/* Links.css */
+
+.links-container {
+  margin: 20px;
+  background-color: #F3F7FD;
+  padding: 8px;
+}
+
+.links-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: transparent;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.links-table th,
+.links-table td {
+  text-align: left;
+  padding: 12px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.links-table th {
+  background-color: transparent;
+  font-size: 14px;
+  color: #666;
+  font-weight: 600;
+}
+
+.links-table th img{
+  margin-bottom: -5px;
+  margin-left: 20px;
+}
+
+.links-table tr:last-child td {
+  border-bottom: none;
+}
+
+.links-table tbody tr:hover {
+  background-color: #f7faff;
+}
+
+.status-active {
+  color: #28a745;
+  font-weight: bold;
+}
+
+.status-inactive {
+  color: #ffc107;
+  font-weight: bold;
+}
+
+.edit-btn,
+.delete-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  margin: 0 4px;
+}
+
+.edit-btn {
+  color: #007bff;
+}
+
+.delete-btn {
+  color: #dc3545;
+}
+
+.edit-btn:hover {
+  text-decoration: underline;
+}
+
+.delete-btn:hover {
+  text-decoration: underline;
+}

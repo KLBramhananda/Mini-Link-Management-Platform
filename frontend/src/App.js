@@ -5,6 +5,7 @@ import Dashboard from './components/dashboard-page/Dashboard';
 import Links from './components/links-page/Links';
 import Analytics from './components/analytics-page/Analytics';
 import MainLayout from './components/MainLayout';
+import Settings from './components/settings-page/Settings';
 
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
           <Route index element={<Dashboard />} />
           <Route path="links" element={<Links />} />
           <Route path="analytics" element={<Analytics />} />
+          <Route path="settings" element={<Settings />} />
         </Route>
       </Routes>
     </Router>
