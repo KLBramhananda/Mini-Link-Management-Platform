@@ -20,6 +20,12 @@
   text-align: left;
   padding: 12px;
   border-bottom: 1px solid #f0f0f0;
+  width: 200px; /* Adjust width for 6 columns, excluding the "Clicks" column */
+}
+
+.links-table th.clicks,
+.links-table td.clicks {
+  width: 90px; /* Set a fixed width for the "Clicks" column */
 }
 
 .links-table th {
@@ -51,6 +57,52 @@
 
 .links-table tbody tr td {
   border: 1px solid #f0f0f0;
+  white-space: nowrap;
+  overflow: hidden;
+  position: relative;
+  padding-right: 10px; /* Add padding to the right side */
+}
+
+.links-table tbody tr td .text-content {
+  display: inline-block;
+  max-width: calc(100% - 50px); /* Adjust width to leave space for the icon and colon */
+  overflow: hidden;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.links-table tbody tr td .copy-button {
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 9px;
+}
+
+.links-table tbody tr td .copy-button img {
+  max-width: 20px;
+  height: auto;
+}
+
+/* Add styles for Original Link and Remarks columns */
+.links-table tbody tr td.original-link,
+.links-table tbody tr td.remarks {
+  max-width: 200px; /* Adjust as needed */
+  overflow: hidden;
+  white-space: nowrap;
+  padding-right: 10px; /* Add padding to the right side */
+}
+
+/* Add styles for the colon in the Short Link column */
+.links-table tbody tr td.short-link {
+  position: relative;
+}
+
+.links-table tbody tr td.short-link::after {
+  content: ":";
+  position: absolute;
+  right: 0; /* Attach to the right border */
+  top: 50%;
+  transform: translateY(-50%);
+  font-weight: bold;
 }
 
 .status-active {
@@ -88,7 +140,6 @@
   text-decoration: underline;
 }
 
-
 .copy-button {
   background: none;
   border: none;
@@ -97,7 +148,7 @@
   margin-left: 8px;
 }
 
-.copy-button:hover {
+copy-button:hover {
   opacity: 0.8;
 }
 
@@ -129,4 +180,27 @@
 .delete-modal-buttons button:last-child {
   background-color: #dc3545;
   color: white;
+}
+
+.copy-modal {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 250px; /* Same width as the sidebar menu */
+  height: 50px; /* Adjust height as needed */
+  background-color: #e6f7ff;
+  border: 1px solid #1B48DA;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: #1B48DA;
+  font-weight: bold;
+  border-radius: 0 0 8px 8px;
+  z-index: 1000;
+}
+
+.copy-modal img {
+  max-width: 20px;
+  height: auto;
 }

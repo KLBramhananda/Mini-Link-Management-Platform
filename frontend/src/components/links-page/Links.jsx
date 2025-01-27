@@ -8,6 +8,7 @@ const Links = forwardRef((props, ref) => {
   const [editingLink, setEditingLink] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
+  const [showCopyModal, setShowCopyModal] = useState(false);
 
   useImperativeHandle(ref, () => ({
     addNewLink: handleCreateLink
@@ -28,10 +29,21 @@ const Links = forwardRef((props, ref) => {
     return new Date(expirationDate) > new Date();
   };
 
+  const formatDateTime = (date) => {
+    const options = {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    };
+    return new Date(date).toLocaleString('en-US', options);
+  };
+
   const handleCreateLink = (linkData) => {
     const newLink = {
       id: Date.now(),
-      date: new Date().toLocaleString(),
+      date: formatDateTime(new Date()),
       originalLink: linkData.destinationUrl,
       shortLink: generateShortLink(),
       remarks: linkData.remarks,
@@ -83,7 +95,8 @@ const Links = forwardRef((props, ref) => {
   const handleCopyLink = async (shortLink) => {
     try {
       await navigator.clipboard.writeText(shortLink);
-      // Optionally add a visual feedback that the link was copied
+      setShowCopyModal(true);
+      setTimeout(() => setShowCopyModal(false), 2000); // Hide modal after 2 seconds
     } catch (err) {
       console.error('Failed to copy link:', err);
     }
@@ -112,7 +125,7 @@ const Links = forwardRef((props, ref) => {
             <th>Original Link</th>
             <th>Short Link</th>
             <th>Remarks</th>
-            <th>Clicks</th>
+            <th className="clicks">Clicks</th>
             <th>Status <img src="/assets/links-page-icons/dropdown.png" alt="option" /></th>
             <th>Action</th>
           </tr>
@@ -121,27 +134,27 @@ const Links = forwardRef((props, ref) => {
           {links.map(link => (
             <tr key={link.id}>
               <td>{link.date}</td>
-              <td>{link.originalLink}</td>
-              <td>
-                {link.shortLink}
+              <td className="original-link">{link.originalLink}</td>
+              <td className="short-link">
+                <span className="text-content">{link.shortLink}</span>
                 <button 
                   className="copy-button"
                   onClick={() => handleCopyLink(link.shortLink)}
                 >
-                  <img src="/assets/copy-icon.png" alt="copy" />
+                  <img src="/assets/links-page-icons/copy-icon.png" alt="copy" />
                 </button>
               </td>
-              <td>{link.remarks}</td>
-              <td>{link.clicks}</td>
+              <td className="remarks">{link.remarks}</td>
+              <td className="clicks">{link.clicks}</td>
               <td className={link.status === "Active" ? "status-active" : "status-inactive"}>
                 {link.status}
               </td>
               <td>
                 <button className="edit-btn" onClick={() => handleEdit(link)}>
-                  <img src="/assets/edit-icon.png" alt="edit" />
+                  <img src="/assets/links-page-icons/edit.png" alt="edit" />
                 </button>
                 <button className="delete-btn" onClick={() => handleDelete(link.id)}>
-                  <img src="/assets/delete-icon.png" alt="delete" />
+                  <img src="/assets/links-page-icons/delete.png" alt="delete" />
                 </button>
               </td>
             </tr>
@@ -159,6 +172,7 @@ const Links = forwardRef((props, ref) => {
               }}
               onSubmit={editingLink ? handleUpdate : handleCreateLink}
               initialData={editingLink}
+              isEditMode={!!editingLink}
             />
           </div>
         </div>
@@ -173,6 +187,13 @@ const Links = forwardRef((props, ref) => {
               <button onClick={confirmDelete}>Yes</button>
             </div>
           </div>
+        </div>
+      )}
+
+      {showCopyModal && (
+        <div className="copy-modal">
+          <img src="/assets/copy-icon-blue.png" alt="Copy Icon" />
+          <span>Link Copied</span>
         </div>
       )}
     </div>

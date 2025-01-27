@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import "./CreateLink.css";
 
-const CreateLink = ({ onClose, onSubmit }) => {
+const CreateLink = ({ onClose, onSubmit, initialData, isEditMode }) => {
   const [destinationUrl, setDestinationUrl] = useState("");
   const [remarks, setRemarks] = useState("");
   const [linkExpiration, setLinkExpiration] = useState(true);
@@ -10,10 +10,17 @@ const CreateLink = ({ onClose, onSubmit }) => {
   const [errors, setErrors] = useState({ destinationUrl: "", remarks: "" });
 
   useEffect(() => {
-    setExpirationDate(getCurrentDateTime());
-  }, []);
+    if (initialData) {
+      setDestinationUrl(initialData.destinationUrl);
+      setRemarks(initialData.remarks);
+      setLinkExpiration(initialData.linkExpiration);
+      setExpirationDate(initialData.expirationDate || getCurrentDateTime());
+    } else {
+      setExpirationDate(getCurrentDateTime());
+    }
+  }, [initialData]);
 
-  const handleCreate = () => {
+  const handleCreateOrUpdate = () => {
     let hasError = false;
     let newErrors = { destinationUrl: "", remarks: "" };
 
@@ -69,7 +76,7 @@ const CreateLink = ({ onClose, onSubmit }) => {
   return (
     <div className="create-link-container">
       <div className="create-link-header">
-        <h2>New Link</h2>
+        <h2>{isEditMode ? "Edit Link" : "New Link"}</h2>
         <img className="close-btn" onClick={onClose} src="/assets/cancel.png" alt="Close" />
       </div>
       <div className="create-link-body">
@@ -117,7 +124,9 @@ const CreateLink = ({ onClose, onSubmit }) => {
       </div>
       <div className="create-link-footer">
         <button className="clear-btn" onClick={handleClear}>Clear</button>
-        <button className="create-btn" onClick={handleCreate}>Create Link</button>
+        <button className="create-btn" onClick={handleCreateOrUpdate}>
+          {isEditMode ? "Save" : "Create Link"}
+        </button>
       </div>
     </div>
   );
