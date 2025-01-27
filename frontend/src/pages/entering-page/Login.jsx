@@ -66,12 +66,7 @@ const Login = () => {
           >
             Login
           </button>
-          <button
-            id="logout"
-            onClick={handleLogout}
-          >
-            Logout
-          </button>
+
         </div>
         <h1>Login</h1>
         <div className="login__container">
@@ -93,7 +88,7 @@ const Login = () => {
             />
             <br />
             {error && <p style={{ color: 'red' }}>{error}</p>}
-            <button className="login__signInButton" type="submit">Login</button>
+            <button className="login__signInButton" type="submit">Register</button>
           </form>
           <h5 className="login__registerButton">
             Don't have an account?{" "}

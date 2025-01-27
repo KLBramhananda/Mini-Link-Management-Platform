@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import './dashboard-page/Dashboard.css';
-import CreateLink from './Create-link';
+import React, { useState, useEffect, useRef } from "react";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
+import "./dashboard-page/Dashboard.css";
+import CreateLink from "./Create-link";
+import Links from "./links-page/Links";
 
 const MainLayout = () => {
   const [greeting, setGreeting] = useState("Good Morning");
   const [showLogout, setShowLogout] = useState(false);
   const [showCreateLink, setShowCreateLink] = useState(false);
+  const linksRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -18,20 +20,27 @@ const MainLayout = () => {
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    navigate('/');
+    localStorage.removeItem("token");
+    navigate("/");
   };
 
   const handleMenuClick = (path) => {
     navigate(`/dashboard/${path}`);
   };
 
-  const handleCreateNewClick = () => {
-    setShowCreateLink(true);
+  const handleCreateNewLink = (linkData) => {
+    if (linksRef.current && linksRef.current.addNewLink) {
+      linksRef.current.addNewLink(linkData);
+    }
+    setShowCreateLink(false);
   };
 
   const handleCloseCreateLink = () => {
     setShowCreateLink(false);
+  };
+
+  const handleCreateNewLinkButtonClick = () => {
+    setShowCreateLink(true);
   };
 
   return (
@@ -43,7 +52,7 @@ const MainLayout = () => {
           <span className="dashboard-date">Tue, Jan 25</span>
         </p>
 
-        <button className="create-new" onClick={handleCreateNewClick}>
+        <button className="create-new" onClick={handleCreateNewLinkButtonClick}>
           <span>
             <img src="/assets/plus.png" alt="" /> Create new
           </span>
@@ -58,7 +67,10 @@ const MainLayout = () => {
         </div>
 
         <div className="user-profile">
-          <button className="user-initials" onClick={() => setShowLogout(!showLogout)}>
+          <button
+            className="user-initials"
+            onClick={() => setShowLogout(!showLogout)}
+          >
             BR
           </button>
           {showLogout && (
@@ -72,32 +84,43 @@ const MainLayout = () => {
       <div className="dashboard-main">
         <aside className="sidebar">
           <ul className="menu">
-            <li 
+            <li
               key="dashboard"
-              className={`menu-item ${location.pathname === '/dashboard' || location.pathname === '/dashboard/' ? 'active' : ''}`}
-              onClick={() => handleMenuClick('')}
+              className={`menu-item ${
+                location.pathname === "/dashboard" ||
+                location.pathname === "/dashboard/"
+                  ? "active"
+                  : ""
+              }`}
+              onClick={() => handleMenuClick("")}
             >
               <img src="/assets/dashboard-icon.png" alt="" /> Dashboard
             </li>
-            <li 
+            <li
               key="links"
-              className={`menu-item ${location.pathname === '/dashboard/links' ? 'active' : ''}`}
-              onClick={() => handleMenuClick('links')}
+              className={`menu-item ${
+                location.pathname === "/dashboard/links" ? "active" : ""
+              }`}
+              onClick={() => handleMenuClick("links")}
             >
               <img src="/assets/links-page-icons/link-icon.png" alt="" /> Links
             </li>
-            <li 
+            <li
               key="analytics"
-              className={`menu-item ${location.pathname === '/dashboard/analytics' ? 'active' : ''}`}
-              onClick={() => handleMenuClick('analytics')}
+              className={`menu-item ${
+                location.pathname === "/dashboard/analytics" ? "active" : ""
+              }`}
+              onClick={() => handleMenuClick("analytics")}
             >
               <img src="/assets/analystics-icon.png" alt="" /> Analytics
             </li>
           </ul>
-          <div 
+          <div
             key="settings"
-            className={`settings ${location.pathname === '/dashboard/settings' ? 'active' : ''}`}
-            onClick={() => handleMenuClick('settings')}
+            className={`settings ${
+              location.pathname === "/dashboard/settings" ? "active" : ""
+            }`}
+            onClick={() => handleMenuClick("settings")}
           >
             <p>
               <img src="/assets/settings.icon.png" alt="" /> Settings
@@ -105,14 +128,21 @@ const MainLayout = () => {
           </div>
         </aside>
         <main className="content">
+        {location.pathname === '/dashboard/links' ? (
+          <Links ref={linksRef} />
+        ) : (
           <Outlet />
-        </main>
+        )}
+      </main>
       </div>
 
       {showCreateLink && (
         <div className="modal-overlay">
           <div className="modal-content">
-            <CreateLink onClose={handleCloseCreateLink} />
+            <CreateLink
+              onClose={handleCloseCreateLink}
+              onSubmit={handleCreateNewLink}
+            />
           </div>
         </div>
       )}

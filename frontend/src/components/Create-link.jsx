@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import "./CreateLink.css";
 
-const CreateLink = ({ onClose }) => {
+const CreateLink = ({ onClose, onSubmit }) => {
   const [destinationUrl, setDestinationUrl] = useState("");
   const [remarks, setRemarks] = useState("");
   const [linkExpiration, setLinkExpiration] = useState(true);
@@ -18,18 +18,27 @@ const CreateLink = ({ onClose }) => {
     let newErrors = { destinationUrl: "", remarks: "" };
 
     if (!destinationUrl) {
-      newErrors.destinationUrl = "This feild is mandatory";
+      newErrors.destinationUrl = "This field is mandatory";
       hasError = true;
     }
     if (!remarks) {
-      newErrors.remarks = "This feild is mandatory";
+      newErrors.remarks = "This field is mandatory";
       hasError = true;
     }
 
     setErrors(newErrors);
 
     if (!hasError) {
-      console.log({ destinationUrl, remarks, linkExpiration, expirationDate });
+      const linkData = {
+        destinationUrl,
+        remarks,
+        linkExpiration,
+        expirationDate: linkExpiration ? expirationDate : null
+      };
+      
+      if (typeof onSubmit === 'function') {
+        onSubmit(linkData);
+      }
       onClose();
     }
   };
@@ -108,7 +117,7 @@ const CreateLink = ({ onClose }) => {
       </div>
       <div className="create-link-footer">
         <button className="clear-btn" onClick={handleClear}>Clear</button>
-        <button className="create-btn" onClick={handleCreate}>Create new</button>
+        <button className="create-btn" onClick={handleCreate}>Create Link</button>
       </div>
     </div>
   );
