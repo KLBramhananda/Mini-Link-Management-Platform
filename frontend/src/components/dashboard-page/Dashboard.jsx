@@ -1,16 +1,37 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 const Dashboard = () => {
-  const dateWiseClicks = []; // Initially empty
-  const clickDevices = []; // Initially empty
-  const totalClicks = 0; // Initially zero
+  const [totalLinks, setTotalLinks] = useState(0);
+  const [dateWiseClicks, setDateWiseClicks] = useState([]);
+
+  useEffect(() => {
+    const username = localStorage.getItem('username') || '';
+    const storedLinks = JSON.parse(localStorage.getItem(`${username}_links`)) || [];
+    setTotalLinks(storedLinks.length);
+
+    const clicksByDate = storedLinks.reduce((acc, link) => {
+      const date = new Date(link.date).toLocaleDateString('en-US');
+      if (!acc[date]) {
+        acc[date] = 0;
+      }
+      acc[date] += 1;
+      return acc;
+    }, {});
+
+    const clicksArray = Object.keys(clicksByDate).map(date => ({
+      date,
+      count: clicksByDate[date]
+    }));
+
+    setDateWiseClicks(clicksArray);
+  }, []);
 
   const maxCount = 100;
 
   return (
     <>
-      <div className="total-clicks">
-        <h2>Total Clicks <span>{totalClicks}</span></h2>
+      <div className="total-links">
+        <h2>Total Links <span>{totalLinks}</span></h2>
       </div>
       <div className="charts">
         <div className="chart date-wise">
@@ -19,7 +40,9 @@ const Dashboard = () => {
             {dateWiseClicks.map(item => (
               <li key={item.date}>
                 <span className="date">{item.date}</span>
-                <span className="bar" style={{ width: `${(item.count / maxCount) * 100}%` }}></span>
+                <div className="bar">
+                  <span style={{ display: 'inline-block', width: `${(item.count / maxCount) * 100}%`, backgroundColor: 'blue', height: '10px' }}></span>
+                </div>
                 <span className="count">{item.count}</span>
               </li>
             ))}
@@ -28,13 +51,7 @@ const Dashboard = () => {
         <div className="chart devices">
           <h3>Click Devices</h3>
           <ul className="chart-bars">
-            {clickDevices.map(item => (
-              <li key={item.device}>
-                <span className="device">{item.device}</span>
-                <span className="bar" style={{ width: `${(item.count / maxCount) * 100}%` }}></span>
-                <span className="count">{item.count}</span>
-              </li>
-            ))}
+            {/* Add device-wise clicks logic here if needed */}
           </ul>
         </div>
       </div>

@@ -11,7 +11,7 @@
   margin: 20px;
   background-color: #ffff !important;
   padding: 0px !important;
-  border-radius: 5px;
+  border-radius: 10px !important;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   overflow: auto; /* Enable scrolling */
   height: 89.3%;
@@ -227,7 +227,7 @@ copy-button:hover {
 .pagination {
   position: fixed;
   bottom: 15px;
-  left: 50%;
+  left: 57%;
   transform: translateX(-50%);
   display: flex;
   gap: 5px;

@@ -132,6 +132,10 @@ const Links = forwardRef((props, ref) => {
     }
   };
 
+  const handleLinkClick = (shortLink) => {
+    const link = links.find(link => link.shortLink === shortLink);
+  };
+
   // Update status based on expiration date
   useEffect(() => {
     const interval = setInterval(() => {
@@ -166,7 +170,7 @@ const Links = forwardRef((props, ref) => {
               <td>{link.date}</td>
               <td className="original-link">{link.originalLink}</td>
               <td className="short-link">
-                <span className="text-content">{link.shortLink}</span>
+                <span className="text-content" onClick={() => handleLinkClick(link.shortLink)}>{link.shortLink}</span>
                 <button 
                   className="copy-button"
                   onClick={() => handleCopyLink(link.shortLink)}

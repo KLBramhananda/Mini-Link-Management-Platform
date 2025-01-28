@@ -252,22 +252,23 @@ body {
 
 .chart-bars .bar {
   flex: 3;
-  display: inline-block;
   height: 8px;
-  background-color: #1B48DA;
   margin: 0 8px;
   vertical-align: middle;
 }
 
 .chart-bars .count {
   flex: 1;
-  text-align: left;
+  text-align: center;
 }
 
+.chart-bars div{
+  display: flex;
+  align-items: center;
+  margin: 0px 10px !important;
+}
 .bar {
-  display: inline-block;
-  height: 10px !important;
-  background-color: #1B48DA;
-  margin-right: 8px;
+
+  margin-right: 8px !important;
   vertical-align: middle;
 }

@@ -46,10 +46,10 @@ app.get('/:shortUrl', async (req, res) => {
     const shortUrl = `https://short.ly/${req.params.shortUrl}`;
     const link = await Link.findOne({ shortLink: shortUrl });
     if (!link) {
-      return res.status(404).send('This URL is no more working :(');
+      return res.status(404).send('<script>alert("Sorry, link is expired, try another link!"); window.location.href = "/";</script>');
     }
     if (link.expirationDate && new Date(link.expirationDate) < new Date()) {
-      return res.status(410).send('This URL is no more working :(');
+      return res.status(410).send('<script>alert("Sorry, link is expired, try another link!"); window.location.href = "/";</script>');
     }
     res.redirect(link.originalLink);
   } catch (error) {
