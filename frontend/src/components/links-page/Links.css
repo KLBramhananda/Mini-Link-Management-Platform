@@ -9,11 +9,12 @@
 .links-container {
   flex: 1;
   margin: 20px;
-  background-color: #F3F7FD;
+  background-color: #ffff !important;
   padding: 0px !important;
   border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   overflow: auto; /* Enable scrolling */
-  height: 85%;
+  height: 89.3%;
 }
 
 .links-table {
@@ -40,7 +41,6 @@
 }
 
 .links-table th {
-  background-color: transparent;
   font-size: 14px;
   color: #666;
   font-weight: 600;
@@ -48,7 +48,7 @@
   padding-right: 0;
   position: sticky; /* Make the header sticky */
   top: 0; /* Stick to the top */
-  background-color: #F3F7FD; /* Match the background color */
+  background-color: #F3F7FD !important; /* Match the background color */
   z-index: 1; /* Ensure it stays above the table body */
 }
 
@@ -66,7 +66,7 @@
 }
 
 .links-table tbody tr {
-  background-color: #ffffff;
+  background-color: #ffffff; /* Set tbody tr background color to white */
   border-bottom: 1px solid #f0f0f0;
 }
 
@@ -222,4 +222,28 @@ copy-button:hover {
   margin-top: -3px;
   max-width: 20px;
   height: auto;
+}
+
+.pagination {
+  position: fixed;
+  bottom: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 5px;
+}
+
+.page-number,
+.page-arrow {
+  background-color: #ffff;
+  border: 1px solid #ccc;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.page-number.active {
+  background-color: #1B48DA;
+  color: white;
+  border: 1px solid #1B48DA;
 }

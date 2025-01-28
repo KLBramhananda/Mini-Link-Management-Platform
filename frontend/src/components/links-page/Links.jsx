@@ -12,6 +12,17 @@ const Links = forwardRef((props, ref) => {
   const [showCopyModal, setShowCopyModal] = useState(false);
   const username = localStorage.getItem('username') || '';
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const linksPerPage = 10;
+
+  const indexOfLastLink = currentPage * linksPerPage;
+  const indexOfFirstLink = indexOfLastLink - linksPerPage;
+  const currentLinks = links.slice(indexOfFirstLink, indexOfLastLink);
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  const nextPage = () => setCurrentPage((prev) => Math.min(prev + 1, Math.ceil(links.length / linksPerPage)));
+  const prevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
+
   useImperativeHandle(ref, () => ({
     addNewLink: handleCreateLink
   }));
@@ -150,7 +161,7 @@ const Links = forwardRef((props, ref) => {
           </tr>
         </thead>
         <tbody>
-          {links.map(link => (
+          {currentLinks.map(link => (
             <tr key={link.id}>
               <td>{link.date}</td>
               <td className="original-link">{link.originalLink}</td>
@@ -180,6 +191,19 @@ const Links = forwardRef((props, ref) => {
           ))}
         </tbody>
       </table>
+      <div className="pagination">
+        <button onClick={prevPage} className="page-arrow">&lt;</button>
+        {Array.from({ length: Math.ceil(links.length / linksPerPage) }, (_, i) => (
+          <button
+            key={i + 1}
+            onClick={() => paginate(i + 1)}
+            className={`page-number ${currentPage === i + 1 ? 'active' : ''}`}
+          >
+            {i + 1}
+          </button>
+        ))}
+        <button onClick={nextPage} className="page-arrow">&gt;</button>
+      </div>
 
       {showCreateLink && (
         <div className="modal-overlay">
