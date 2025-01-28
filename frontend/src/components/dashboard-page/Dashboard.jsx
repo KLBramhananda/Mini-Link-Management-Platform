@@ -31,7 +31,7 @@ const Dashboard = () => {
   return (
     <>
       <div className="total-links">
-        <h2>Total Links <span>{totalLinks}</span></h2>
+        <h2>Total Clicks <span>{totalLinks}</span></h2>
       </div>
       <div className="charts">
         <div className="chart date-wise">

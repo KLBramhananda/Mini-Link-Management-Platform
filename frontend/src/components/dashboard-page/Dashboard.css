@@ -186,20 +186,17 @@ body {
   overflow-y: auto;
 }
 
-.total-clicks {
+.total-links {
   background-color: #ffffff;
-  padding: 16px;
-  margin-bottom: 16px;
-  margin-top: 30px;
+  padding: 10px;
+  margin-top: 5px;
+  margin-bottom: -10px;
   text-align: left;
+  margin-left: 48px;
+  width: 250px
 }
 
-.total-clicks h2 {
-  margin: 0 0 8px;
-  font-size: 20px;
-}
-
-.total-clicks h2 span{
+.total-links h2 span{
   margin-left: 40px;
   color:#1B48DA
 }
@@ -213,21 +210,23 @@ body {
   margin-top: 40px;
   display: flex;
   gap: 16px;
+  margin-left: 60px;
 }
 
 .chart {
-  width: 500px;
+  width: 450px;
   height: 400px;
   background-color: #ffffff;
-  padding: 16px;
+  padding: 20px;
   border: 2px solid #eeecec;
+  border-radius: 5px;
 }
 
 .chart h3 {
   margin: 0 0 12px;
   font-size: 16px;
   color:#1B48DA;
-  font-weight: normal;
+  font-weight: bold;
 }
 
 .chart-bars {
@@ -268,7 +267,6 @@ body {
   margin: 0px 10px !important;
 }
 .bar {
-
   margin-right: 8px !important;
   vertical-align: middle;
 }
