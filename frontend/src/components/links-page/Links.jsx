@@ -2,6 +2,7 @@ import React, { useState, useEffect, forwardRef, useImperativeHandle } from "rea
 import axios from "axios";
 import "./Links.css";
 import CreateLink from "../Create-link";
+import { useLocation } from "react-router-dom";
 
 const Links = forwardRef((props, ref) => {
   const [links, setLinks] = useState([]);
@@ -78,10 +79,35 @@ const Links = forwardRef((props, ref) => {
     return new Date(date).toLocaleString('en-US', options).replace(/ AM| PM/, '');
   };
 
+  const location = useLocation();
+  const searchTerm = location.state?.searchTerm || '';
+
   useEffect(() => {
     const storedLinks = JSON.parse(localStorage.getItem(`${username}_links`)) || [];
     setLinks(storedLinks);
-  }, [username]);
+    if (location.state?.fromSearch && searchTerm) {
+      setTimeout(() => {
+        const searchResult = storedLinks.find(link => link.remarks.includes(searchTerm));
+        if (searchResult) {
+          const element = document.querySelector(`tr[data-id="${searchResult.id}"]`);
+          if (element) {
+            element.classList.add('highlight');
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            const rowIndex = Array.from(element.parentNode.children).indexOf(element) + 1;
+            alert(`The entered remarks "${searchTerm}" found in remarks column in row ${rowIndex}`);
+          }
+        } else {
+          alert(`The entered remarks "${searchTerm}" not found in remarks column.`);
+        }
+      }, 0); // Delay to ensure navigation completes before executing search logic
+    }
+    // Clear the state after handling the search
+    return () => {
+      if (location.state?.fromSearch) {
+        location.state.fromSearch = false;
+      }
+    };
+  }, [username, searchTerm, location.state?.fromSearch]);
 
   const handleCreateLink = async (linkData) => {
     const newLink = {
@@ -195,7 +221,7 @@ const Links = forwardRef((props, ref) => {
         </thead>
         <tbody>
           {sortedLinks.map(link => (
-            <tr key={link.id}>
+            <tr key={link.id} data-id={link.id} className={link.remarks.includes(searchTerm) ? 'highlight' : ''}>
               <td>{link.date}</td>
               <td className="original-link">{link.originalLink}</td>
               <td className="short-link">

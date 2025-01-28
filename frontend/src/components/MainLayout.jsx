@@ -62,6 +62,15 @@ const MainLayout = () => {
     setShowCreateLink(true);
   };
 
+  const handleSearch = (event) => {
+    if (event.key === 'Enter' || event.type === 'click') {
+      const searchBox = document.querySelector('.search-box');
+      const searchTerm = event.target.value || searchBox.value;
+      searchBox.value = ''; // Clear the search input field
+      navigate('/dashboard/links', { state: { searchTerm, fromSearch: true } });
+    }
+  };
+
   const userInitials = username ? username.slice(0, 2).toUpperCase() : 'BR';
 
   return (
@@ -79,11 +88,12 @@ const MainLayout = () => {
           </span>
         </button>
         <div className="search">
-          <img className="search-logo" src="/assets/search.png" alt="" />
+          <img className="search-logo" src="/assets/search.png" alt="" onClick={handleSearch} />
           <input
             className="search-box"
             type="text"
-            placeholder="Search by links"
+            placeholder="Search by remarks"
+            onKeyDown={handleSearch}
           />
         </div>
 
