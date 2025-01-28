@@ -77,6 +77,10 @@ const Settings = () => {
     setShowDeleteModal(false);
   };
 
+  const handleCloseDeleteModal = () => {
+    setShowDeleteModal(false);
+  };
+
   return (
     <div className="settings-page">
       <div className="form-group">
@@ -114,9 +118,10 @@ const Settings = () => {
       {showDeleteModal && (
         <div className="modal-overlay">
           <div className="delete-modal">
-            <h3>Are you sure you want to delete your account?</h3>
+            <button className="close-btn" onClick={handleCloseDeleteModal}>X</button>
+            <h3>Are you sure, you want to delete your account?</h3>
             <div className="delete-modal-buttons">
-              <button onClick={() => setShowDeleteModal(false)}>No</button>
+              <button onClick={handleCloseDeleteModal}>No</button>
               <button onClick={confirmDelete}>Yes</button>
             </div>
           </div>

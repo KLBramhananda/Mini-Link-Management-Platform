@@ -152,8 +152,7 @@ body {
 
 .settings {
   margin-top: 20px;
-  width: 210px;
-  margin-left: 10px;
+  width: 230px;
   padding: 10px;
   border-top: 1px solid #eeecec;
   border-bottom: 1px solid #eeecec;
@@ -162,6 +161,8 @@ body {
   padding: 10px 2px;
   border-radius: 10px;
   padding-left: 20px;
+  margin-left: 10px;
+  width: 189px;
   cursor: pointer;
 }
 .settings img{

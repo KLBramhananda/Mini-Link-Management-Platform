@@ -13,6 +13,7 @@ const MainLayout = () => {
   const linksRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
+  const [currentDate, setCurrentDate] = useState(new Date());
 
   useEffect(() => {
     const hour = new Date().getHours();
@@ -22,7 +23,17 @@ const MainLayout = () => {
 
     const storedLinks = JSON.parse(localStorage.getItem(`${username}_links`)) || [];
     setLinks(storedLinks);
+
+    const updateDate = () => setCurrentDate(new Date());
+    const intervalId = setInterval(updateDate, 60000); // Update date every minute
+
+    return () => clearInterval(intervalId);
   }, [username]);
+
+  const formatDate = (date) => {
+    const options = { weekday: 'short', month: 'short', day: 'numeric' };
+    return date.toLocaleDateString('en-US', options);
+  };
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -79,7 +90,7 @@ const MainLayout = () => {
       <header className="dashboard-header">
         <p className="dashboard-title">
           <img src="/assets/climate.png" alt="" /> {greeting}, {username} <br />
-          <span className="dashboard-date">Tue, Jan 25</span>
+          <span className="dashboard-date">{formatDate(currentDate)}</span>
         </p>
 
         <button className="create-new" onClick={handleCreateNewLinkButtonClick}>

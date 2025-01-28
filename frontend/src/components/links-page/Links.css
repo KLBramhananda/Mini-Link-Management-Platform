@@ -55,7 +55,7 @@
 
 .links-table th img {
   margin-bottom: -5px;
-  margin-left: 40px !important;
+  margin-left: 20px !important;
   cursor: pointer;
 }
 
@@ -174,15 +174,30 @@ copy-button:hover {
 
 .delete-modal {
   background: white;
-  padding: 20px;
+  padding: 20px !important;
+  height: 170px;
+  width: 450px;
   border-radius: 8px;
   text-align: center;
 }
-
+.delete-modal h3{
+  margin-top: 50px;
+  margin-bottom: 40px !important;
+  font-size: 15px;
+}
+.delete-modal .close-btn {
+  position: absolute;
+  background: none;
+  border: none;
+  font-size: 15px;
+  cursor: pointer;
+  margin-top: 265px;
+  margin-right: 530px;
+}
 .delete-modal-buttons {
   display: flex;
   justify-content: center;
-  gap: 20px;
+  gap: 30px !important;
   margin-top: 20px;
 }
 
@@ -191,6 +206,7 @@ copy-button:hover {
   border-radius: 4px;
   border: none;
   cursor: pointer;
+  width: 180px;
 }
 
 .delete-modal-buttons button:first-child {
@@ -198,9 +214,10 @@ copy-button:hover {
 }
 
 .delete-modal-buttons button:last-child {
-  background-color: #dc3545;
+  background-color: blue !important;
   color: white;
 }
+
 
 .copy-modal {
   position: fixed;
@@ -252,4 +269,12 @@ copy-button:hover {
 
 .highlight {
   background-color: yellow;
+}
+
+.links-table th.original-link,
+.links-table th.remarks,
+.links-table td.original-link,
+.links-table td.remarks {
+  overflow: hidden;
+  white-space: nowrap;
 }
