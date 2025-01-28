@@ -3,6 +3,11 @@ import React, { useEffect, useState } from 'react';
 const Dashboard = () => {
   const [totalLinks, setTotalLinks] = useState(0);
   const [dateWiseClicks, setDateWiseClicks] = useState([]);
+  const [deviceWiseClicks, setDeviceWiseClicks] = useState({
+    mobile: 0,
+    desktop: 0,
+    tablet: 0
+  });
 
   useEffect(() => {
     const username = localStorage.getItem('username') || '';
@@ -24,6 +29,17 @@ const Dashboard = () => {
     }));
 
     setDateWiseClicks(clicksArray);
+
+    const clicksByDevice = storedLinks.reduce((acc, link) => {
+      const device = link.device || 'desktop'; // Default to 'desktop' if device info is not available
+      if (!acc[device]) {
+        acc[device] = 0;
+      }
+      acc[device] += 1;
+      return acc;
+    }, { mobile: 0, desktop: 0, tablet: 0 });
+
+    setDeviceWiseClicks(clicksByDevice);
   }, []);
 
   const maxCount = 100;
@@ -51,7 +67,15 @@ const Dashboard = () => {
         <div className="chart devices">
           <h3>Click Devices</h3>
           <ul className="chart-bars">
-            {/* Add device-wise clicks logic here if needed */}
+            {Object.keys(deviceWiseClicks).map(device => (
+              <li key={device}>
+                <span className="device">{device.charAt(0).toUpperCase() + device.slice(1)}</span>
+                <div className="bar">
+                  <span style={{ display: 'inline-block', width: `${(deviceWiseClicks[device] / maxCount) * 100}%`, backgroundColor: 'blue', height: '10px' }}></span>
+                </div>
+                <span className="count">{deviceWiseClicks[device]}</span>
+              </li>
+            ))}
           </ul>
         </div>
       </div>
