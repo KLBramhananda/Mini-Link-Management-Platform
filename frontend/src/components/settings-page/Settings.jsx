@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import './Settings.css';
 
 const Settings = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [mobile, setMobile] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Fetch user data from localStorage or API
@@ -43,9 +45,26 @@ const Settings = () => {
     }
   };
 
-  const handleDeleteAccount = () => {
-    // Logic to delete account
-    console.log('Account deleted');
+  const handleDeleteAccount = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      await axios.delete('http://localhost:5000/api/users/delete', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      localStorage.removeItem('token');
+      localStorage.removeItem('username');
+      localStorage.removeItem('email');
+      localStorage.removeItem('phone');
+
+      alert('Your account has been deleted');
+      navigate('/');
+    } catch (error) {
+      console.error('Delete Error:', error);
+      alert('Failed to delete account');
+    }
   };
 
   return (

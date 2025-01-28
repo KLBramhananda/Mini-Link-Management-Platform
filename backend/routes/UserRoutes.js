@@ -11,4 +11,7 @@ router.post('/login', UserController.login);
 // Update user credentials
 router.put('/update', authMiddleware, UserController.update);
 
+// Delete user account
+router.delete('/delete', authMiddleware, UserController.delete);
+
 module.exports = router;
