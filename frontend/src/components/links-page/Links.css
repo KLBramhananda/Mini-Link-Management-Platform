@@ -56,6 +56,7 @@
 .links-table th img {
   margin-bottom: -5px;
   margin-left: 40px !important;
+  cursor: pointer;
 }
 
 .links-table tr:last-child td {

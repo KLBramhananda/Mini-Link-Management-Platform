@@ -7,6 +7,7 @@ const Settings = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [mobile, setMobile] = useState('');
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -67,6 +68,15 @@ const Settings = () => {
     }
   };
 
+  const handleDelete = () => {
+    setShowDeleteModal(true);
+  };
+
+  const confirmDelete = () => {
+    handleDeleteAccount();
+    setShowDeleteModal(false);
+  };
+
   return (
     <div className="settings-page">
       <div className="form-group">
@@ -98,8 +108,20 @@ const Settings = () => {
       </div>
       <div className="button-group">
         <button id='save' onClick={handleSaveChanges}>Save Changes</button> <br />
-        <button id='delete' onClick={handleDeleteAccount}>Delete Account</button>
+        <button id='delete' onClick={handleDelete}>Delete Account</button>
       </div>
+
+      {showDeleteModal && (
+        <div className="modal-overlay">
+          <div className="delete-modal">
+            <h3>Are you sure you want to delete your account?</h3>
+            <div className="delete-modal-buttons">
+              <button onClick={() => setShowDeleteModal(false)}>No</button>
+              <button onClick={confirmDelete}>Yes</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

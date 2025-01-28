@@ -23,6 +23,31 @@ const Links = forwardRef((props, ref) => {
   const nextPage = () => setCurrentPage((prev) => Math.min(prev + 1, Math.ceil(links.length / linksPerPage)));
   const prevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
 
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
+
+  const sortedLinks = [...currentLinks].sort((a, b) => {
+    if (sortConfig.key === 'date') {
+      const dateA = new Date(a.date);
+      const dateB = new Date(b.date);
+      return sortConfig.direction === 'asc' ? dateA - dateB : dateB - dateA;
+    } else if (sortConfig.key === 'status') {
+      const statusA = a.status.toLowerCase();
+      const statusB = b.status.toLowerCase();
+      if (statusA < statusB) return sortConfig.direction === 'asc' ? -1 : 1;
+      if (statusA > statusB) return sortConfig.direction === 'asc' ? 1 : -1;
+      return 0;
+    }
+    return 0;
+  });
+
+  const handleSort = (key) => {
+    let direction = 'asc';
+    if (sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
+    setSortConfig({ key, direction });
+  };
+
   useImperativeHandle(ref, () => ({
     addNewLink: handleCreateLink
   }));
@@ -155,17 +180,21 @@ const Links = forwardRef((props, ref) => {
       <table className="links-table">
         <thead>
           <tr>
-            <th>Date <img id="date" src="/assets/links-page-icons/dropdown.png" alt="option" /></th>
+            <th onClick={() => handleSort('date')}>
+              Date <img id="date" src="/assets/links-page-icons/dropdown.png" alt="option" />
+            </th>
             <th>Original Link</th>
             <th>Short Link</th>
             <th>Remarks</th>
             <th className="clicks">Clicks</th>
-            <th>Status <img src="/assets/links-page-icons/dropdown.png" alt="option" /></th>
+            <th onClick={() => handleSort('status')}>
+              Status <img src="/assets/links-page-icons/dropdown.png" alt="option" />
+            </th>
             <th>Action</th>
           </tr>
         </thead>
         <tbody>
-          {currentLinks.map(link => (
+          {sortedLinks.map(link => (
             <tr key={link.id}>
               <td>{link.date}</td>
               <td className="original-link">{link.originalLink}</td>

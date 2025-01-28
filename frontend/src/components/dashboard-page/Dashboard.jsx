@@ -23,12 +23,14 @@ const Dashboard = () => {
       return acc;
     }, {});
 
-    const clicksArray = Object.keys(clicksByDate).map(date => ({
-      date,
-      count: clicksByDate[date]
-    }));
+    const cumulativeClicksArray = [];
+    let cumulativeCount = 0;
+    Object.keys(clicksByDate).sort().forEach(date => {
+      cumulativeCount += clicksByDate[date];
+      cumulativeClicksArray.push({ date, count: cumulativeCount });
+    });
 
-    setDateWiseClicks(clicksArray);
+    setDateWiseClicks(cumulativeClicksArray.reverse());
 
     const clicksByDevice = storedLinks.reduce((acc, link) => {
       const device = link.device || 'desktop'; // Default to 'desktop' if device info is not available
