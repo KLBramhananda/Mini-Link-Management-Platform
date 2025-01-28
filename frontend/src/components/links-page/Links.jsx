@@ -140,7 +140,7 @@ const Links = forwardRef((props, ref) => {
       <table className="links-table">
         <thead>
           <tr>
-            <th>Date <img src="/assets/links-page-icons/dropdown.png" alt="option" /></th>
+            <th>Date <img id="date" src="/assets/links-page-icons/dropdown.png" alt="option" /></th>
             <th>Original Link</th>
             <th>Short Link</th>
             <th>Remarks</th>

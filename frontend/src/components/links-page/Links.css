@@ -13,10 +13,12 @@
   padding: 0px !important;
   border-radius: 5px;
   overflow: auto; /* Enable scrolling */
+  height: 85%;
 }
 
 .links-table {
   width: 100%;
+  height: 60px; /* Set a fixed height for the table */
   border-collapse: collapse;
   background-color: transparent;
   border-radius: 8px;
@@ -26,6 +28,7 @@
 .links-table th,
 .links-table td {
   text-align: left;
+  margin-left: 10px;
   padding: 12px;
   border-bottom: 1px solid #f0f0f0;
   width: 220px; /* Adjust width for 6 columns, excluding the "Clicks" column */
@@ -51,7 +54,7 @@
 
 .links-table th img {
   margin-bottom: -5px;
-  margin-left: 20px;
+  margin-left: 40px !important;
 }
 
 .links-table tr:last-child td {
