@@ -48,6 +48,8 @@ const Signup = () => {
       console.log('Registration Response:', response.data);
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('username', formData.username);
+      localStorage.setItem('email', formData.email); // Store email
+      localStorage.setItem('phone', formData.phone); // Store phone
       navigate('/dashboard');
     } catch (error) {
       console.error('Registration Error:', {

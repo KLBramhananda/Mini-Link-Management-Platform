@@ -111,3 +111,30 @@ exports.login = async (req, res) => {
     res.status(500).json({ error: "Server error during login" });
   }
 };
+
+exports.update = async (req, res) => {
+  const { username, email, phone, password } = req.body;
+  const userId = req.user.id;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    user.username = username || user.username;
+    user.email = email || user.email;
+    user.phone = phone || user.phone;
+
+    if (password) {
+      user.password = await bcrypt.hash(password, 10);
+    }
+
+    await user.save();
+
+    res.status(200).json({ message: "User updated successfully" });
+  } catch (error) {
+    console.error("Update Error:", error);
+    res.status(500).json({ error: "Server error during update" });
+  }
+};

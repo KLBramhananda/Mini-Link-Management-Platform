@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import './Settings.css';
 
 const Settings = () => {
@@ -6,9 +7,40 @@ const Settings = () => {
   const [email, setEmail] = useState('');
   const [mobile, setMobile] = useState('');
 
-  const handleSaveChanges = () => {
-    // Logic to save changes
-    console.log('Changes saved:', { name, email, mobile });
+  useEffect(() => {
+    // Fetch user data from localStorage or API
+    const username = localStorage.getItem('username') || '';
+    const userEmail = localStorage.getItem('email') || '';
+    const userPhone = localStorage.getItem('phone') || '';
+
+    setName(username);
+    setEmail(userEmail);
+    setMobile(userPhone);
+  }, []);
+
+  const handleSaveChanges = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.put('http://localhost:5000/api/users/update', {
+        username: name,
+        email,
+        phone: mobile
+      }, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      localStorage.setItem('username', name);
+      localStorage.setItem('email', email);
+      localStorage.setItem('phone', mobile);
+
+      alert('Your credentials are updated');
+      console.log('Changes saved:', response.data);
+    } catch (error) {
+      console.error('Update Error:', error);
+      alert('Failed to update credentials');
+    }
   };
 
   const handleDeleteAccount = () => {
