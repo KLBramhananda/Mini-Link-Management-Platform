@@ -50,7 +50,7 @@ const Links = forwardRef((props, ref) => {
       hour: '2-digit',
       minute: '2-digit'
     };
-    return new Date(date).toLocaleString('en-US', options);
+    return new Date(date).toLocaleString('en-US', options).replace(/ AM| PM/, '');
   };
 
   useEffect(() => {

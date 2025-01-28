@@ -31,6 +31,7 @@
   text-align: left;
   margin-left: 10px;
   padding: 12px;
+  padding-left: 25px;
   border-bottom: 1px solid #f0f0f0;
   width: 220px; /* Adjust width for 6 columns, excluding the "Clicks" column */
 }
@@ -44,7 +45,7 @@
   font-size: 14px;
   color: #666;
   font-weight: 600;
-  padding-left: 0;
+  padding-left: 27px;
   padding-right: 0;
   position: sticky; /* Make the header sticky */
   top: 0; /* Stick to the top */
