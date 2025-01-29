@@ -40,6 +40,10 @@ app.use('/api/users', userRoutes);
 // Link routes
 app.use('/api/links', linkRoutes);
 
+app.get('/', (req, res) => {
+  res.send('Hello World!');
+});
+
 // Handle short URL redirection
 app.get('/:shortUrl', async (req, res) => {
   try {

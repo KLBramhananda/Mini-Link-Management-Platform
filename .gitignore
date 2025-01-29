@@ -50,3 +50,19 @@ coverage/
 # Miscellaneous
 *.tgz
 *.lock-wscript
+
+# Frontend specific
+public/
+*.css.map
+*.js.map
+
+# Backend specific
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+*.swp
+*.swo
+*.egg-info/
+.venv/
+.venv.bak/

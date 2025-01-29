@@ -23,7 +23,7 @@ const Signup = () => {
   };
 
   const axiosInstance = axios.create({
-    baseURL: 'http://localhost:5000/api', // Updated backend URL
+    baseURL: 'http://localhost:5000/api', // Revert to original URL
     timeout: 5000,
     headers: {
       'Content-Type': 'application/json'
