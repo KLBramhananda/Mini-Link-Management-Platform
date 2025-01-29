@@ -23,7 +23,7 @@ const Signup = () => {
   };
 
   const axiosInstance = axios.create({
-    baseURL: 'https://mini-link-management-platform-backend-fnqm.onrender.com/api', // Updated backend URL
+    baseURL: 'http://localhost:5000/api', // Updated backend URL
     timeout: 5000,
     headers: {
       'Content-Type': 'application/json'

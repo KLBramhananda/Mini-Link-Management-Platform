@@ -19,7 +19,7 @@ const Login = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "https://mini-link-management-platform-backend-fnqm.onrender.com/api/users/login", // Updated backend URL
+        "http://localhost:5000/api/users/login", // Updated backend URL
         {
           email: formData.email,
           password: formData.password

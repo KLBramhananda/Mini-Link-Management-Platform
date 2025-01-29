@@ -146,7 +146,7 @@ const Links = forwardRef((props, ref) => {
     };
 
     try {
-      await axios.post("https://mini-link-management-platform-backend-fnqm.onrender.com/api/links/create", newLink);
+      await axios.post("http://localhost:5000/api/links/create", newLink);
       const updatedLinks = [newLink, ...links];
       setLinks(updatedLinks);
       localStorage.setItem(`${username}_links`, JSON.stringify(updatedLinks));
@@ -210,7 +210,7 @@ const Links = forwardRef((props, ref) => {
 
   const handleLinkClick = async (shortLink) => {
     try {
-      const response = await axios.get(`https://mini-link-management-platform-backend-fnqm.onrender.com/api/links/click/${shortLink}`);
+      const response = await axios.get(`http://localhost:5000/api/links/click/${shortLink}`);
       const updatedLinks = links.map(link =>
         link.shortLink === shortLink ? { ...link, clicks: link.clicks + 1 } : link
       );
