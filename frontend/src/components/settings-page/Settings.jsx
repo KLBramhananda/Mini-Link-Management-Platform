@@ -24,7 +24,7 @@ const Settings = () => {
   const handleSaveChanges = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.put('http://localhost:5000/api/users/update', {
+      const response = await axios.put(`${process.env.REACT_APP_BASE_URL}/api/users/update`, {
         username: name,
         email,
         phone: mobile
@@ -49,7 +49,7 @@ const Settings = () => {
   const handleDeleteAccount = async () => {
     try {
       const token = localStorage.getItem('token');
-      await axios.delete('http://localhost:5000/api/users/delete', {
+      await axios.delete(`${process.env.REACT_APP_BASE_URL}/api/users/delete`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }

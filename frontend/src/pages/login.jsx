@@ -17,9 +17,11 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("Environment URL:", process.env.REACT_APP_BASE_URL)
+    
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/users/login", // Revert to original URL
+        `${process.env.REACT_APP_BASE_URL}/api/users/login`, // Revert to original URL
         {
           email: formData.email,
           password: formData.password
