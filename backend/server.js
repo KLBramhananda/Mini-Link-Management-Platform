@@ -12,7 +12,7 @@ const port = process.env.PORT || 3000;
 // Middleware to parse JSON bodies
 app.use(express.json());
 app.use(cors({
-  origin: [""], // Frontend port
+  origin: ["https://mini-link-management-platform-front.vercel.app"], // Frontend port
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
