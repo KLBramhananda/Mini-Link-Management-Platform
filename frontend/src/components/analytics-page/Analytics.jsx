@@ -35,21 +35,23 @@ const Analytics = () => {
       <table className="analytics-table">
         <thead>
           <tr>
-            <th>Timestamp <img src="/assets/links-page-icons/dropdown.png" alt="option" /></th>
-            <th>Original Link</th>
-            <th>Short Link</th>
-            <th>IP Address</th>
-            <th>User Device</th>
+            <th style={{ width: "14.28%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+              Timestamp <img src="/assets/links-page-icons/dropdown.png" alt="option" />
+            </th>
+            <th style={{ width: "14.28%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>Original Link</th>
+            <th style={{ width: "14.28%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>Short Link</th>
+            <th style={{ width: "14.28%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>IP Address</th>
+            <th style={{ width: "14.28%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>User Device</th>
           </tr>
         </thead>
         <tbody>
           {currentLinks.map((data, index) => (
             <tr key={index}>
-              <td>{data.timestamp}</td>
-              <td>{data.originalLink}</td>
-              <td>{data.shortLink}</td>
-              <td>{data.ipAddress}</td>
-              <td>{data.userDevice}</td>
+              <td style={{ width: "14.28%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{data.timestamp}</td>
+              <td style={{ width: "14.28%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{data.originalLink}</td>
+              <td style={{ width: "14.28%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{data.shortLink}</td>
+              <td style={{ width: "14.28%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{data.ipAddress}</td>
+              <td style={{ width: "14.28%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{data.userDevice}</td>
             </tr>
           ))}
         </tbody>

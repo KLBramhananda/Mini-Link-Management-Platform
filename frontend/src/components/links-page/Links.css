@@ -29,11 +29,12 @@
 .links-table th,
 .links-table td {
   text-align: left;
-  margin-left: 10px;
   padding: 12px;
-  padding-left: 25px;
   border-bottom: 1px solid #f0f0f0;
-  width: 220px; /* Adjust width for 6 columns, excluding the "Clicks" column */
+  width: 14%; /* Ensure all columns are of equal width */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .links-table th.clicks,

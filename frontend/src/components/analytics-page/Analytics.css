@@ -27,11 +27,12 @@
 .analytics-table th,
 .analytics-table td {
   text-align: left;
-  margin-left: 10px;
   padding: 14px;
-  padding-left: 25px;
   border-bottom: 1px solid #f0f0f0;
-  width: 220px;
+  width: 14%; /* Ensure all columns are of equal width */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .analytics-table th.clicks,
@@ -101,10 +102,16 @@
 
 .analytics-table tbody tr td.original-link,
 .analytics-table tbody tr td.remarks {
-  max-width: 200px;
   overflow: hidden;
   white-space: nowrap;
+  text-overflow: ellipsis;
   padding-right: 10px;
+}
+
+.analytics-table tbody tr td.original-link {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .analytics-table tbody tr td.short-link {
