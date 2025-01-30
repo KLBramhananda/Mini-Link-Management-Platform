@@ -175,7 +175,7 @@ const Links = forwardRef((props, ref) => {
         device: getDeviceType(),
       };
 
-      // Create link in backend first
+      
       const response = await axios.post(
         `https://mini-link-management-platform-server.vercel.app/api/links/create`,
         {
