@@ -175,9 +175,8 @@ const Links = forwardRef((props, ref) => {
         device: getDeviceType(),
       };
 
-      
       const response = await axios.post(
-        `https://mini-link-management-platform-server.vercel.app/api/links/create`,
+        `${process.env.REACT_APP_BASE_URL}/api/links/create`,
         {
           originalLink: linkData.destinationUrl,
           remarks: linkData.remarks,
@@ -281,7 +280,7 @@ const Links = forwardRef((props, ref) => {
 
       // First, increment the click in the database
       const response = await axios.get(
-        `https://mini-link-management-platform-server.vercel.app/api/links/click/${shortUrl}`   
+        `${process.env.REACT_APP_BASE_URL}/api/links/click/${shortUrl}`
       );
 
       // Update click count in local state regardless of link status
@@ -334,8 +333,8 @@ const Links = forwardRef((props, ref) => {
       try {
         // Get links from backend
         const response = await axios.get(
-          `${process.env.REACT_APP_BASE_URL}/api/links`   
-        );  // while deploying frontend add backend deploy url
+          `${process.env.REACT_APP_BASE_URL}/api/links`
+        ); // while deploying frontend add backend deploy url
 
         if (!isComponentMounted) return;
 

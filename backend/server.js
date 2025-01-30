@@ -13,7 +13,7 @@ const port = process.env.PORT || 5000;
 app.use(express.json());
 app.use(
   cors({
-    origin: "https://mini-link-management-platform-front.vercel.app",
+    origin: "http://localhost:3001", //https://mini-link-management-platform-front.vercel.app
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
