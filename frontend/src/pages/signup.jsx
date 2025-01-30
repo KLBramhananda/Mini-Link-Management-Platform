@@ -23,7 +23,7 @@ const Signup = () => {
   };
 
   const axiosInstance = axios.create({
-    baseURL: `${process.env.REACT_APP_BASE_URL}/api`, // Revert to original URL
+    baseURL: `https://mini-link-management-platform-server.vercel.app/api`, // Revert to original URL
     timeout: 5000,
     headers: {
       "Content-Type": "application/json",
