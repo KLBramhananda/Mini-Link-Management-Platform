@@ -21,7 +21,7 @@ const Login = () => {
     
     try {
       const response = await axios.post(
-        `https://mini-link-management-platform-server.vercel.app/api/users/login`, // while deploying frontend add backend deploy url
+        `https://mini-link-management-platform-server.vercel.app/api/users/login`,
         {
           email: formData.email,
           password: formData.password
