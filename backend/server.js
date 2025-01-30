@@ -7,7 +7,7 @@ const Link = require("./models/Link"); // Import the Link model
 require("dotenv").config();
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 5000;
 
 // Middleware to parse JSON bodies
 app.use(express.json());
@@ -50,26 +50,47 @@ app.get("/", (req, res) => {
 // Handle short URL redirection
 app.get("/:shortUrl", async (req, res) => {
   try {
-    const shortUrl = `https://short.ly/${req.params.shortUrl}`;
-    const link = await Link.findOne({ shortLink: shortUrl });
+    const shortLink = `http://localhost:5000/${req.params.shortUrl}`;
+    console.log("Looking for shortLink:", shortLink);
+
+    const link = await Link.findOne({ shortLink });
+
     if (!link) {
       return res
         .status(404)
         .send(
-          '<script>alert("Sorry, link is expired, try another link!"); window.location.href = "/";</script>'
+          '<script>alert("Looking for page does not exist!"); window.location.href = "http://localhost:3001";</script>'
         );
     }
+
     if (link.expirationDate && new Date(link.expirationDate) < new Date()) {
+      return res.status(410).json({ message: "This link is no more :(" });
+    }
+
+    // Validate URL format
+    try {
+      new URL(link.originalLink);
+    } catch (e) {
       return res
-        .status(410)
+        .status(400)
         .send(
-          '<script>alert("Sorry, link is expired, try another link!"); window.location.href = "/";</script>'
+          '<script>alert("Looking for page does not exist!"); window.location.href = "http://localhost:3001";</script>'
         );
     }
-    res.redirect(link.originalLink);
+
+    // Increment the click count
+    link.clicks = (link.clicks || 0) + 1;
+    await link.save();
+
+    // Redirect to the original URL
+    return res.redirect(link.originalLink);
   } catch (error) {
     console.error("Redirection Error:", error);
-    res.status(500).send("Server error during redirection");
+    return res
+      .status(500)
+      .send(
+        '<script>alert("Looking for page does not exist!"); window.location.href = "http://localhost:3001";</script>'
+      );
   }
 });
 
