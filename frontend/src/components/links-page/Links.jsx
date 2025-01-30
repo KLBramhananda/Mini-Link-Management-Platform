@@ -10,22 +10,13 @@ import CreateLink from "../Create-link";
 import { useLocation } from "react-router-dom";
 
 const Links = forwardRef((props, ref) => {
-  const username = localStorage.getItem("username") || "";
-
-  const [links, setLinks] = useState(() => {
-    try {
-      const storedLinks = localStorage.getItem(`${username}_links`);
-      return storedLinks ? JSON.parse(storedLinks) : [];
-    } catch (error) {
-      console.error("Error loading links from localStorage:", error);
-      return [];
-    }
-  });
+  const [links, setLinks] = useState([]);
   const [showCreateLink, setShowCreateLink] = useState(false);
   const [editingLink, setEditingLink] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
   const [showCopyModal, setShowCopyModal] = useState(false);
+  const username = localStorage.getItem("username") || "";
 
   const [currentPage, setCurrentPage] = useState(1);
   const linksPerPage = 10;
@@ -43,21 +34,6 @@ const Links = forwardRef((props, ref) => {
 
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
 
-  const sortedLinks = [...currentLinks].sort((a, b) => {
-    if (sortConfig.key === "date") {
-      const dateA = new Date(a.date);
-      const dateB = new Date(b.date);
-      return sortConfig.direction === "asc" ? dateA - dateB : dateB - dateA;
-    } else if (sortConfig.key === "status") {
-      const statusA = a.status.toLowerCase();
-      const statusB = b.status.toLowerCase();
-      if (statusA < statusB) return sortConfig.direction === "asc" ? -1 : 1;
-      if (statusA > statusB) return sortConfig.direction === "asc" ? 1 : -1;
-      return 0;
-    }
-    return 0;
-  });
-
   const handleSort = (key) => {
     let direction = "asc";
     if (sortConfig.key === key && sortConfig.direction === "asc") {
@@ -65,6 +41,20 @@ const Links = forwardRef((props, ref) => {
     }
     setSortConfig({ key, direction });
   };
+
+  const sortedLinks = [...currentLinks].sort((a, b) => {
+    if (sortConfig.key === "date") {
+      const dateA = new Date(a.date);
+      const dateB = new Date(b.date);
+      return sortConfig.direction === "asc" ? dateA - dateB : dateB - dateA;
+    } else if (sortConfig.key === "status") {
+      const statusOrder = { Active: 1, Inactive: 2 };
+      const orderA = statusOrder[a.status];
+      const orderB = statusOrder[b.status];
+      return sortConfig.direction === "asc" ? orderA - orderB : orderB - orderA;
+    }
+    return 0;
+  });
 
   useImperativeHandle(ref, () => ({
     addNewLink: handleCreateLink,
@@ -74,13 +64,13 @@ const Links = forwardRef((props, ref) => {
     const characters =
       "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     const length = 6;
-    let randomString = "";
+    let shortLink = "https://short.ly/";
     for (let i = 0; i < length; i++) {
-      randomString += characters.charAt(
+      shortLink += characters.charAt(
         Math.floor(Math.random() * characters.length)
       );
     }
-    return `http://localhost:5000/${randomString}`;
+    return shortLink;
   };
 
   const isLinkActive = (expirationDate) => {
@@ -125,7 +115,7 @@ const Links = forwardRef((props, ref) => {
             alert(`"${searchTerm}" ->  found in  ${rowIndex} row`);
           }
         } else {
-          alert(`"${searchTerm}" -> not found!`);
+          alert(`"${searchTerm}" -> Not Found in Links Table !`);
         }
       }, 0); // Delay to ensure navigation completes before executing search logic
     }
@@ -137,84 +127,33 @@ const Links = forwardRef((props, ref) => {
     };
   }, [username, searchTerm, location.state?.fromSearch, location.state]);
 
-  const getDeviceType = () => {
-    const userAgent = navigator.userAgent.toLowerCase();
-    if (/(tablet|ipad|playbook|silk)|(android(?!.*mobi))/i.test(userAgent)) {
-      return "Tablet";
-    } else if (
-      /mobile|android|iphone|ipod|blackberry|opera mini|iemobile/i.test(
-        userAgent
-      )
-    ) {
-      return "Mobile";
-    }
-    return "Desktop";
-  };
-
   const handleCreateLink = async (linkData) => {
+    const newLink = {
+      id: Date.now(),
+      date: formatDateTime(new Date()),
+      originalLink: linkData.destinationUrl,
+      shortLink: generateShortLink(),
+      remarks: linkData.remarks,
+      clicks: 0,
+      status:
+        linkData.linkExpiration && linkData.expirationDate
+          ? isLinkActive(linkData.expirationDate)
+            ? "Active"
+            : "Inactive"
+          : "Active",
+      expirationDate: linkData.expirationDate,
+    };
+
     try {
-      const ipResponse = await axios.get(
-        `${process.env.REACT_APP_BASE_URL}/api/ip`
-      );
-      const userIp = ipResponse.data.ip;
-
-      const newLink = {
-        id: Date.now(),
-        date: formatDateTime(new Date()),
-        originalLink: linkData.destinationUrl,
-        remarks: linkData.remarks,
-        clicks: 0,
-        status:
-          linkData.linkExpiration && linkData.expirationDate
-            ? isLinkActive(linkData.expirationDate)
-              ? "Active"
-              : "Inactive"
-            : "Active",
-        expirationDate: linkData.expirationDate,
-        ipAddress: userIp,
-        device: getDeviceType(),
-      };
-
-      const response = await axios.post(
+      await axios.post(
         `${process.env.REACT_APP_BASE_URL}/api/links/create`,
-        {
-          originalLink: linkData.destinationUrl,
-          remarks: linkData.remarks,
-          expirationDate: linkData.expirationDate,
-        }
-      );
-
-      if (!response.data || !response.data.link) {
-        throw new Error("Invalid response from server");
-      }
-
-      const updatedLink = {
-        ...newLink,
-        shortLink: response.data.link.shortLink,
-      };
-
-      // Update state only after successful backend operation
-      setLinks((prevLinks) => {
-        try {
-          const newLinks = [updatedLink, ...prevLinks];
-          // Use try-catch for localStorage
-          try {
-            localStorage.setItem(`${username}_links`, JSON.stringify(newLinks));
-          } catch (storageError) {
-            console.error("localStorage error:", storageError);
-          }
-          return newLinks;
-        } catch (error) {
-          console.error("State update error:", error);
-          return prevLinks; // Keep previous state on error
-        }
-      });
-
-      // Close modal only after successful update
-      setShowCreateLink(false);
+        newLink
+      ); // Revert to original URL
+      const updatedLinks = [newLink, ...links];
+      setLinks(updatedLinks);
+      localStorage.setItem(`${username}_links`, JSON.stringify(updatedLinks));
     } catch (error) {
       console.error("Link Creation Error:", error);
-      alert("Error creating link. Please try again.");
     }
   };
 
@@ -232,11 +171,9 @@ const Links = forwardRef((props, ref) => {
   };
 
   const confirmDelete = () => {
-    setLinks((prevLinks) => {
-      const updatedLinks = prevLinks.filter((link) => link.id !== deleteId);
-      localStorage.setItem(`${username}_links`, JSON.stringify(updatedLinks));
-      return updatedLinks;
-    });
+    const updatedLinks = links.filter((link) => link.id !== deleteId);
+    setLinks(updatedLinks);
+    localStorage.setItem(`${username}_links`, JSON.stringify(updatedLinks));
     setShowDeleteModal(false);
   };
 
@@ -275,29 +212,17 @@ const Links = forwardRef((props, ref) => {
 
   const handleLinkClick = async (shortLink) => {
     try {
-      // Extract the shortUrl from the full shortLink
-      const shortUrl = shortLink.replace("http://localhost:5000/", "");
-
-      // First, increment the click in the database
       const response = await axios.get(
-        `${process.env.REACT_APP_BASE_URL}/api/links/click/${shortUrl}`
+        `${process.env.REACT_APP_BASE_URL}/api/links/click/${shortLink}`
+      ); // Revert to original URL
+      const updatedLinks = links.map((link) =>
+        link.shortLink === shortLink
+          ? { ...link, clicks: link.clicks + 1 }
+          : link
       );
-
-      // Update click count in local state regardless of link status
-      setLinks((prevLinks) => {
-        const updatedLinks = prevLinks.map((link) =>
-          link.shortLink === shortLink
-            ? { ...link, clicks: (link.clicks || 0) + 1 }
-            : link
-        );
-        localStorage.setItem(`${username}_links`, JSON.stringify(updatedLinks));
-        return updatedLinks;
-      });
-
-      // Open the destination URL in a new tab if link is active
-      if (response.data.destinationUrl) {
-        window.open(response.data.destinationUrl, "_blank");
-      }
+      setLinks(updatedLinks);
+      localStorage.setItem(`${username}_links`, JSON.stringify(updatedLinks));
+      window.open(response.data.destinationUrl, "_blank");
     } catch (error) {
       console.error("Failed to fetch destination URL:", error);
     }
@@ -325,78 +250,26 @@ const Links = forwardRef((props, ref) => {
     return () => clearInterval(interval);
   }, []);
 
-  // Modified useEffect for deployment
-  useEffect(() => {
-    let isComponentMounted = true;
-
-    const fetchLinks = async () => {
-      try {
-        // Get links from backend
-        const response = await axios.get(
-          `${process.env.REACT_APP_BASE_URL}/api/links`
-        ); // while deploying frontend add backend deploy url
-
-        if (!isComponentMounted) return;
-
-        if (response.data) {
-          setLinks((prevLinks) => {
-            const updatedLinks = prevLinks.map((link) => {
-              const dbLink = response.data.find(
-                (l) => l.shortLink === link.shortLink
-              );
-              return dbLink ? { ...link, clicks: dbLink.clicks || 0 } : link;
-            });
-
-            try {
-              localStorage.setItem(
-                `${username}_links`,
-                JSON.stringify(updatedLinks)
-              );
-            } catch (storageError) {
-              console.error("localStorage error:", storageError);
-            }
-
-            return updatedLinks;
-          });
-        }
-      } catch (error) {
-        console.error("Failed to fetch links:", error);
-      }
-    };
-
-    fetchLinks();
-    const interval = setInterval(fetchLinks, 3000);
-
-    return () => {
-      isComponentMounted = false;
-      clearInterval(interval);
-    };
-  }, [username]);
-
-  // Add error boundary
-  if (!Array.isArray(links)) {
-    return <div>Loading links...</div>;
-  }
-
   return (
     <div className="links-container">
       <table className="links-table">
         <thead>
           <tr>
             <th
-              style={{
-                width: "14.28%",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                whiteSpace: "nowrap",
-              }}
               onClick={() => handleSort("date")}
+              style={{ cursor: "pointer" }}
             >
               Date{" "}
               <img
-                id="date"
                 src="/assets/links-page-icons/dropdown.png"
                 alt="option"
+                style={{
+                  transform:
+                    sortConfig.key === "date" && sortConfig.direction === "desc"
+                      ? "rotate(180deg)"
+                      : "none",
+                  transition: "transform 0.3s",
+                }}
               />
             </th>
             <th
@@ -406,7 +279,6 @@ const Links = forwardRef((props, ref) => {
                 textOverflow: "ellipsis",
                 whiteSpace: "nowrap",
               }}
-              className="original-link"
             >
               Original Link
             </th>
@@ -442,16 +314,22 @@ const Links = forwardRef((props, ref) => {
               Clicks
             </th>
             <th
-              style={{
-                width: "14.28%",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                whiteSpace: "nowrap",
-              }}
               onClick={() => handleSort("status")}
+              style={{ cursor: "pointer" }}
             >
               Status{" "}
-              <img src="/assets/links-page-icons/dropdown.png" alt="option" />
+              <img
+                src="/assets/links-page-icons/dropdown.png"
+                alt="option"
+                style={{
+                  transform:
+                    sortConfig.key === "status" &&
+                    sortConfig.direction === "desc"
+                      ? "rotate(180deg)"
+                      : "none",
+                  transition: "transform 0.3s",
+                }}
+              />
             </th>
             <th
               style={{
@@ -466,7 +344,7 @@ const Links = forwardRef((props, ref) => {
           </tr>
         </thead>
         <tbody>
-          {currentLinks.map((link) => (
+          {sortedLinks.map((link) => (
             <tr
               key={link.id}
               data-id={link.id}
@@ -538,7 +416,7 @@ const Links = forwardRef((props, ref) => {
                 }}
                 className="clicks"
               >
-                {link.clicks || 0}
+                {link.clicks}
               </td>
               <td
                 style={{

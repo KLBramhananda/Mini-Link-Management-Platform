@@ -23,7 +23,7 @@ const Settings = () => {
 
   const handleSaveChanges = async () => {
     try {
-      const token = localStorage.getItem('token');// while deploying frontend add backend deploy url
+      const token = localStorage.getItem('token');
       const response = await axios.put(`${process.env.REACT_APP_BASE_URL}/api/users/update`, {
         username: name,
         email,
@@ -48,7 +48,7 @@ const Settings = () => {
 
   const handleDeleteAccount = async () => {
     try {
-      const token = localStorage.getItem('token');  // while deploying frontend add backend deploy url
+      const token = localStorage.getItem('token');
       await axios.delete(`${process.env.REACT_APP_BASE_URL}/api/users/delete`, {
         headers: {
           'Authorization': `Bearer ${token}`

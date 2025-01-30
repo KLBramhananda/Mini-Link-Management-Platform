@@ -21,7 +21,7 @@ const Login = () => {
     
     try {
       const response = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}/api/users/login`,
+        `${process.env.REACT_APP_BASE_URL}/api/users/login`, // Revert to original URL
         {
           email: formData.email,
           password: formData.password

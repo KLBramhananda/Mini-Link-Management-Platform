@@ -277,3 +277,19 @@ copy-button:hover {
     font-size: 14px;
   }
 }
+
+.analytics-table th[onClick],
+.links-table th[onClick] {
+  cursor: pointer;
+  user-select: none;
+}
+
+.analytics-table th[onClick]:hover,
+.links-table th[onClick]:hover {
+  background-color: #e9ecef;
+}
+
+.analytics-table th img,
+.links-table th img {
+  transition: transform 0.3s ease;
+}

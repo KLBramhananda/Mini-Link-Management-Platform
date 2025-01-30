@@ -8,6 +8,7 @@ const Analytics = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const linksPerPage = 10;
   const [userIp, setUserIp] = useState("");
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
 
   useEffect(() => {
     // Fetch IP address when component mounts
@@ -60,21 +61,45 @@ const Analytics = () => {
     );
   const prevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
 
+  const handleSort = (key) => {
+    let direction = "asc";
+    if (sortConfig.key === key && sortConfig.direction === "asc") {
+      direction = "desc";
+    }
+    setSortConfig({ key, direction });
+  };
+
+  const sortedData = [...currentLinks].sort((a, b) => {
+    if (sortConfig.key === "timestamp") {
+      const dateA = new Date(a.timestamp);
+      const dateB = new Date(b.timestamp);
+      return sortConfig.direction === "asc" ? dateA - dateB : dateB - dateA;
+    }
+    return 0;
+  });
+
   return (
     <div className="analytics-container">
       <table className="analytics-table">
         <thead>
           <tr>
             <th
-              style={{
-                width: "14.28%",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                whiteSpace: "nowrap",
-              }}
+              onClick={() => handleSort("timestamp")}
+              style={{ cursor: "pointer" }}
             >
               Timestamp{" "}
-              <img src="/assets/links-page-icons/dropdown.png" alt="option" />
+              <img
+                src="/assets/links-page-icons/dropdown.png"
+                alt="option"
+                style={{
+                  transform:
+                    sortConfig.key === "timestamp" &&
+                    sortConfig.direction === "desc"
+                      ? "rotate(180deg)"
+                      : "none",
+                  transition: "transform 0.3s",
+                }}
+              />
             </th>
             <th className="original-link">Original Link</th>
             <th
@@ -110,7 +135,7 @@ const Analytics = () => {
           </tr>
         </thead>
         <tbody>
-          {currentLinks.map((data, index) => (
+          {sortedData.map((data, index) => (
             <tr key={index}>
               <td
                 style={{
