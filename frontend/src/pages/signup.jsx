@@ -23,7 +23,7 @@ const Signup = () => {
   };
 
   const axiosInstance = axios.create({
-    baseURL: `https://mini-link-management-platform-server.vercel.app/api`, //while deploying frontend add backend deploy URL
+    baseURL: `https://mini-link-management-platform-server.vercel.app/api`,
     timeout: 5000,
     headers: {
       "Content-Type": "application/json",
