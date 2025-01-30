@@ -22,6 +22,7 @@
   background-color: transparent;
   border-radius: 8px;
   overflow: hidden;
+  table-layout: fixed !important;
 }
 
 .analytics-table th,
@@ -29,10 +30,11 @@
   text-align: left;
   padding: 8px 12px;
   border-bottom: 1px solid #f0f0f0;
-  width: 14%;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  max-width: 200px !important;
+  width: 20% !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
 }
 
 .analytics-table th.clicks,
@@ -103,16 +105,11 @@
 
 .analytics-table tbody tr td.original-link,
 .analytics-table tbody tr td.remarks {
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  padding-right: 10px;
-}
-
-.analytics-table tbody tr td.original-link {
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  max-width: 200px !important;
+  width: 200px !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
 }
 
 .analytics-table tbody tr td.short-link {

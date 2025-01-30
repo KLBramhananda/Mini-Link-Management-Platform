@@ -301,6 +301,7 @@ const Links = forwardRef((props, ref) => {
                 textOverflow: "ellipsis",
                 whiteSpace: "nowrap",
               }}
+              className="original-link"
             >
               Original Link
             </th>

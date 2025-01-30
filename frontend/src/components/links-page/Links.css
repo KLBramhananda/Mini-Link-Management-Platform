@@ -23,6 +23,8 @@
   background-color: transparent;
   border-radius: 8px;
   overflow: hidden;
+  table-layout: fixed !important; /* This is crucial for fixed widths */
+  width: 100% !important;
 }
 
 .links-table th,
@@ -30,15 +32,16 @@
   text-align: left;
   padding: 8px 12px; /* Slightly reduced padding */
   border-bottom: 1px solid #f0f0f0;
-  width: 14%; /* Ensure all columns are of equal width */
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  width: 14.28% !important; /* Keep equal width distribution */
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
 }
 
 .links-table th.clicks,
 .links-table td.clicks {
-  width: 90px; /* Set a fixed width for the "Clicks" column */
+  width: 90px !important;
+  max-width: 90px !important;
 }
 
 .links-table th {
@@ -109,10 +112,11 @@
 /* Add styles for Original Link and Remarks columns */
 .links-table tbody tr td.original-link,
 .links-table tbody tr td.remarks {
-  max-width: 200px; /* Adjust as needed */
-  overflow: hidden;
-  white-space: nowrap;
-  padding-right: 10px; /* Add padding to the right side */
+  max-width: 200px !important;
+  width: 200px !important; /* Force fixed width */
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
 }
 
 /* Add styles for the colon in the Short Link column */
@@ -304,4 +308,35 @@ copy-button:hover {
     padding: 10px;
     z-index: 2;
   }
+}
+
+/* Add these new styles for Links page */
+.links-table th,
+.links-table td {
+  max-width: 200px !important; /* Set a strict maximum width */
+  width: 14.28% !important; /* Keep equal width distribution */
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+/* Specific styles for columns that need fixed width */
+.links-table .original-link,
+.links-table .remarks {
+  max-width: 200px !important;
+  width: 200px !important; /* Force fixed width */
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+/* Add specific width for other columns if needed */
+.links-table .clicks {
+  width: 90px !important;
+  max-width: 90px !important;
+}
+
+.links-table .status {
+  width: 100px !important;
+  max-width: 100px !important;
 }
