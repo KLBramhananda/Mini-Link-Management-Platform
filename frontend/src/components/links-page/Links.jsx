@@ -174,7 +174,7 @@ const Links = forwardRef((props, ref) => {
 
       // Let the backend generate the short URL
       const response = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}/api/links/create`,
+        `https://mini-link-management-platform-server.vercel.app/api/links/create`,
         {
           originalLink: linkData.destinationUrl,
           remarks: linkData.remarks,
@@ -261,7 +261,7 @@ const Links = forwardRef((props, ref) => {
 
       // First, increment the click in the database
       const response = await axios.get(
-        `${process.env.REACT_APP_BASE_URL}/api/links/click/${shortUrl}`
+        `https://mini-link-management-platform-server.vercel.app/api/links/click/${shortUrl}`   
       );
 
       // Update click count in local state
@@ -313,8 +313,8 @@ const Links = forwardRef((props, ref) => {
     const updateClickCounts = async () => {
       try {
         const response = await axios.get(
-          `${process.env.REACT_APP_BASE_URL}/api/links`
-        );
+          `${process.env.REACT_APP_BASE_URL}/api/links`   
+        );  // while deploying frontend add backend deploy url
 
         setLinks((prevLinks) => {
           const updatedLinks = prevLinks.map((link) => {
