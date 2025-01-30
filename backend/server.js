@@ -63,6 +63,11 @@ app.get("/:shortUrl", async (req, res) => {
         );
     }
 
+    // Increment clicks regardless of link status
+    link.clicks = (link.clicks || 0) + 1;
+    await link.save();
+
+    // Check if link is expired after incrementing clicks
     if (link.expirationDate && new Date(link.expirationDate) < new Date()) {
       return res.status(410).json({ message: "This link is no more :(" });
     }
@@ -77,10 +82,6 @@ app.get("/:shortUrl", async (req, res) => {
           '<script>alert("Looking for page does not exist!"); window.location.href = "http://localhost:3001";</script>'
         );
     }
-
-    // Increment the click count
-    link.clicks = (link.clicks || 0) + 1;
-    await link.save();
 
     // Redirect to the original URL
     return res.redirect(link.originalLink);
