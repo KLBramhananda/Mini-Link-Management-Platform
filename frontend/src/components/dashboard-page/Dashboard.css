@@ -373,12 +373,13 @@ body {
     margin: 0;
     padding: 0;
     flex: 3;
+    gap: 5px;
   }
 
   .menu-item {
     margin: 0;
-    padding: 8px;
-    font-size: 14px;
+    padding: 8px 4px;
+    font-size: 12px;
     white-space: nowrap;
     text-align: center;
     flex: 1;
@@ -399,9 +400,10 @@ body {
   }
 
   .settings p {
+    padding: 8px 4px;
     margin: 0;
-    padding: 8px;
-    width: auto;
+    width: auto !important;
+    font-size: 12px;
     text-align: center;
     white-space: nowrap;
   }
@@ -440,16 +442,25 @@ body {
     margin: 20px auto;
   }
 
+  .total-links {
+    margin: 50px auto 20px auto;
+    width: 90%;
+    max-width: 250px;
+  }
+
   .charts {
     width: 90%;
-    padding: 0 10px;
+    margin: 40px auto;
+    padding: 0;
     overflow-y: auto;
     max-height: calc(100vh - 300px);
-    margin-bottom: 60px;
     flex-direction: column;
+    align-items: center;
   }
 
   .chart {
+    width: 100%;
+    max-width: 500px;
     min-height: 400px;
     margin-bottom: 16px;
   }

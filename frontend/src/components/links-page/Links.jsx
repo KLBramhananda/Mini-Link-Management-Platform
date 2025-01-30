@@ -128,25 +128,50 @@ const Links = forwardRef((props, ref) => {
     };
   }, [username, searchTerm, location.state?.fromSearch, location.state]);
 
-  const handleCreateLink = async (linkData) => {
-    const newLink = {
-      id: Date.now(),
-      date: formatDateTime(new Date()),
-      originalLink: linkData.destinationUrl,
-      shortLink: generateShortLink(),
-      remarks: linkData.remarks,
-      clicks: 0,
-      status:
-        linkData.linkExpiration && linkData.expirationDate
-          ? isLinkActive(linkData.expirationDate)
-            ? "Active"
-            : "Inactive"
-          : "Active",
-      expirationDate: linkData.expirationDate,
-    };
+  const getDeviceType = () => {
+    const userAgent = navigator.userAgent.toLowerCase();
+    if (/(tablet|ipad|playbook|silk)|(android(?!.*mobi))/i.test(userAgent)) {
+      return "Tablet";
+    } else if (
+      /mobile|android|iphone|ipod|blackberry|opera mini|iemobile/i.test(
+        userAgent
+      )
+    ) {
+      return "Mobile";
+    }
+    return "Desktop";
+  };
 
+  const handleCreateLink = async (linkData) => {
     try {
-      await axios.post(`${process.env.REACT_APP_BASE_URL}/api/links/create`, newLink); // Revert to original URL
+      // Fetch IP address
+      const ipResponse = await axios.get(
+        `${process.env.REACT_APP_BASE_URL}/api/ip`
+      );
+      const userIp = ipResponse.data.ip;
+
+      const newLink = {
+        id: Date.now(),
+        date: formatDateTime(new Date()),
+        originalLink: linkData.destinationUrl,
+        shortLink: generateShortLink(),
+        remarks: linkData.remarks,
+        clicks: 0,
+        status:
+          linkData.linkExpiration && linkData.expirationDate
+            ? isLinkActive(linkData.expirationDate)
+              ? "Active"
+              : "Inactive"
+            : "Active",
+        expirationDate: linkData.expirationDate,
+        ipAddress: userIp,
+        device: getDeviceType(),
+      };
+
+      await axios.post(
+        `${process.env.REACT_APP_BASE_URL}/api/links/create`,
+        newLink
+      );
       const updatedLinks = [newLink, ...links];
       setLinks(updatedLinks);
       localStorage.setItem(`${username}_links`, JSON.stringify(updatedLinks));
@@ -210,15 +235,19 @@ const Links = forwardRef((props, ref) => {
 
   const handleLinkClick = async (shortLink) => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_BASE_URL}/api/links/click/${shortLink}`); // Revert to original URL
-      const updatedLinks = links.map(link =>
-        link.shortLink === shortLink ? { ...link, clicks: link.clicks + 1 } : link
+      const response = await axios.get(
+        `${process.env.REACT_APP_BASE_URL}/api/links/click/${shortLink}`
+      ); // Revert to original URL
+      const updatedLinks = links.map((link) =>
+        link.shortLink === shortLink
+          ? { ...link, clicks: link.clicks + 1 }
+          : link
       );
       setLinks(updatedLinks);
       localStorage.setItem(`${username}_links`, JSON.stringify(updatedLinks));
-      window.open(response.data.destinationUrl, '_blank');
+      window.open(response.data.destinationUrl, "_blank");
     } catch (error) {
-      console.error('Failed to fetch destination URL:', error);
+      console.error("Failed to fetch destination URL:", error);
     }
   };
 
@@ -249,7 +278,15 @@ const Links = forwardRef((props, ref) => {
       <table className="links-table">
         <thead>
           <tr>
-            <th style={{ width: "14.28%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} onClick={() => handleSort("date")}>
+            <th
+              style={{
+                width: "14.28%",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+              }}
+              onClick={() => handleSort("date")}
+            >
               Date{" "}
               <img
                 id="date"
@@ -257,15 +294,69 @@ const Links = forwardRef((props, ref) => {
                 alt="option"
               />
             </th>
-            <th style={{ width: "14.28%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>Original Link</th>
-            <th style={{ width: "14.28%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>Short Link</th>
-            <th style={{ width: "14.28%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>Remarks</th>
-            <th style={{ width: "14.28%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} className="clicks">Clicks</th>
-            <th style={{ width: "14.28%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} onClick={() => handleSort("status")}>
+            <th
+              style={{
+                width: "14.28%",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+              }}
+            >
+              Original Link
+            </th>
+            <th
+              style={{
+                width: "14.28%",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+              }}
+            >
+              Short Link
+            </th>
+            <th
+              style={{
+                width: "14.28%",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+              }}
+            >
+              Remarks
+            </th>
+            <th
+              style={{
+                width: "14.28%",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+              }}
+              className="clicks"
+            >
+              Clicks
+            </th>
+            <th
+              style={{
+                width: "14.28%",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+              }}
+              onClick={() => handleSort("status")}
+            >
               Status{" "}
               <img src="/assets/links-page-icons/dropdown.png" alt="option" />
             </th>
-            <th style={{ width: "14.28%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>Action</th>
+            <th
+              style={{
+                width: "14.28%",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+              }}
+            >
+              Action
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -275,9 +366,36 @@ const Links = forwardRef((props, ref) => {
               data-id={link.id}
               className={link.remarks.includes(searchTerm) ? "highlight" : ""}
             >
-              <td style={{ width: "14.28%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{link.date}</td>
-              <td style={{ width: "14.28%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} className="original-link">{link.originalLink}</td>
-              <td style={{ width: "14.28%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} className="short-link">
+              <td
+                style={{
+                  width: "14.28%",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {link.date}
+              </td>
+              <td
+                style={{
+                  width: "14.28%",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                }}
+                className="original-link"
+              >
+                {link.originalLink}
+              </td>
+              <td
+                style={{
+                  width: "14.28%",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                }}
+                className="short-link"
+              >
                 <span
                   className="text-content"
                   onClick={() => handleLinkClick(link.shortLink)}
@@ -294,16 +412,49 @@ const Links = forwardRef((props, ref) => {
                   />
                 </button>
               </td>
-              <td style={{ width: "14.28%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} className="remarks">{link.remarks}</td>
-              <td style={{ width: "14.28%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} className="clicks">{link.clicks}</td>
-              <td style={{ width: "14.28%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
+              <td
+                style={{
+                  width: "14.28%",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                }}
+                className="remarks"
+              >
+                {link.remarks}
+              </td>
+              <td
+                style={{
+                  width: "14.28%",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                }}
+                className="clicks"
+              >
+                {link.clicks}
+              </td>
+              <td
+                style={{
+                  width: "14.28%",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                }}
                 className={
                   link.status === "Active" ? "status-active" : "status-inactive"
                 }
               >
                 {link.status}
               </td>
-              <td style={{ width: "14.28%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+              <td
+                style={{
+                  width: "14.28%",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                }}
+              >
                 <button className="edit-btn" onClick={() => handleEdit(link)}>
                   <img src="/assets/links-page-icons/edit.png" alt="edit" />
                 </button>
@@ -358,11 +509,15 @@ const Links = forwardRef((props, ref) => {
       {showDeleteModal && (
         <div className="modal-overlay">
           <div className="delete-modal">
-            <button className="close-btn" onClick={handleCloseDeleteModal}>X</button>
+            <button className="close-btn" onClick={handleCloseDeleteModal}>
+              X
+            </button>
             <h3>Are you sure, you want to remove it?</h3>
             <div className="delete-modal-buttons">
               <button onClick={handleCloseDeleteModal}>No</button>
-              <button className="dm" onClick={confirmDelete}>Yes</button>
+              <button className="dm" onClick={confirmDelete}>
+                Yes
+              </button>
             </div>
           </div>
         </div>

@@ -12,6 +12,7 @@
   border-radius: 10px !important;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   height: auto;
+  overflow-x: auto;
 }
 
 .analytics-table {
@@ -21,7 +22,6 @@
   background-color: transparent;
   border-radius: 8px;
   overflow: hidden;
-  margin-bottom: 50px;
 }
 
 .analytics-table th,
@@ -252,4 +252,31 @@ copy-button:hover {
   background-color: #1b48da;
   color: white;
   border: 1px solid #1b48da;
+}
+
+@media screen and (max-width: 768px) {
+  .analytics-container {
+    margin: 10px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .analytics-table {
+    min-width: 800px;
+  }
+
+  .pagination {
+    position: fixed;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    justify-content: center;
+  }
+
+  .page-number,
+  .page-arrow {
+    padding: 3px 8px;
+    font-size: 14px;
+  }
 }

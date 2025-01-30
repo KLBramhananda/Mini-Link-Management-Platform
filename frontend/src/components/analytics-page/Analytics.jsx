@@ -1,26 +1,48 @@
 // Links.jsx
 import React, { useState, useEffect } from "react";
 import "./Analytics.css";
+import axios from 'axios';
 
 const Analytics = () => {
   const [analyticsData, setAnalyticsData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const linksPerPage = 10;
+  const [userIp, setUserIp] = useState('');
+
+  useEffect(() => {
+    // Fetch IP address when component mounts
+    const fetchIpAddress = async () => {
+      try {
+        const response = await axios.get(`${process.env.REACT_APP_BASE_URL}/api/ip`);
+        setUserIp(response.data.ip);
+      } catch (error) {
+        console.error('Error fetching IP:', error);
+      }
+    };
+
+    fetchIpAddress();
+  }, []);
 
   useEffect(() => {
     const username = localStorage.getItem('username') || '';
     const storedLinks = JSON.parse(localStorage.getItem(`${username}_links`)) || [];
 
     const analyticsArray = storedLinks.map(link => ({
-      timestamp: new Date(link.date).toLocaleString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }).replace(/ AM| PM/, ''),
+      timestamp: new Date(link.date).toLocaleString('en-US', { 
+        year: 'numeric', 
+        month: 'short', 
+        day: 'numeric', 
+        hour: '2-digit', 
+        minute: '2-digit' 
+      }).replace(/ AM| PM/, ''),
       originalLink: link.originalLink,
       shortLink: link.shortLink,
-      ipAddress: link.ipAddress || '192.158.1.66', // Assuming IP address is stored in 'ipAddress'
-      userDevice: link.device || 'Desktop' // Assuming device info is stored in 'device'
+      ipAddress: link.ipAddress || userIp, // Use the fetched IP address
+      userDevice: link.device || navigator.userAgent // Get user's device info
     }));
 
     setAnalyticsData(analyticsArray);
-  }, []);
+  }, [userIp]); // Add userIp as dependency
 
   const indexOfLastLink = currentPage * linksPerPage;
   const indexOfFirstLink = indexOfLastLink - linksPerPage;
