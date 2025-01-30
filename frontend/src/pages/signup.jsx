@@ -23,11 +23,11 @@ const Signup = () => {
   };
 
   const axiosInstance = axios.create({
-    baseURL: `https://mini-link-management-platform-server.vercel.app/api`, // Revert to original URL
+    baseURL: `${process.env.REACT_APP_BASE_URL}/api`, // Revert to original URL
     timeout: 5000,
     headers: {
-      'Content-Type': 'application/json'
-    }
+      "Content-Type": "application/json",
+    },
   });
 
   const handleSubmit = async (e) => {
@@ -38,25 +38,25 @@ const Signup = () => {
     }
 
     try {
-      const response = await axiosInstance.post('/users/register', {
+      const response = await axiosInstance.post("/users/register", {
         username: formData.username,
         email: formData.email,
         phone: formData.phone,
-        password: formData.password
+        password: formData.password,
       });
-      
-      console.log('Registration Response:', response.data);
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('username', formData.username);
-      localStorage.setItem('email', formData.email); // Store email
-      localStorage.setItem('phone', formData.phone); // Store phone
-      navigate('/dashboard');
+
+      console.log("Registration Response:", response.data);
+      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("username", formData.username);
+      localStorage.setItem("email", formData.email); // Store email
+      localStorage.setItem("phone", formData.phone); // Store phone
+      navigate("/dashboard");
     } catch (error) {
-      console.error('Registration Error:', {
+      console.error("Registration Error:", {
         response: error.response,
-        message: error.message
+        message: error.message,
       });
-      setError(error.response?.data?.error || 'Registration failed');
+      setError(error.response?.data?.error || "Registration failed");
     }
   };
 

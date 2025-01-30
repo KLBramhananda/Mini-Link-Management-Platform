@@ -8,12 +8,15 @@ const MainLayout = () => {
   const [greeting, setGreeting] = useState("Good Morning");
   const [showLogout, setShowLogout] = useState(false);
   const [showCreateLink, setShowCreateLink] = useState(false);
-  const [username, setUsername] = useState(localStorage.getItem('username') || '');
+  const [username, setUsername] = useState(
+    localStorage.getItem("username") || ""
+  );
   const [links, setLinks] = useState([]);
   const linksRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
   const [currentDate, setCurrentDate] = useState(new Date());
+  const logoutTimeoutRef = useRef(null);
 
   useEffect(() => {
     const hour = new Date().getHours();
@@ -21,7 +24,8 @@ const MainLayout = () => {
     else if (hour < 18) setGreeting("Good afternoon");
     else setGreeting("Good evening");
 
-    const storedLinks = JSON.parse(localStorage.getItem(`${username}_links`)) || [];
+    const storedLinks =
+      JSON.parse(localStorage.getItem(`${username}_links`)) || [];
     setLinks(storedLinks);
 
     const updateDate = () => setCurrentDate(new Date());
@@ -31,8 +35,8 @@ const MainLayout = () => {
   }, [username]);
 
   const formatDate = (date) => {
-    const options = { weekday: 'short', month: 'short', day: 'numeric' };
-    return date.toLocaleDateString('en-US', options);
+    const options = { weekday: "short", month: "short", day: "numeric" };
+    return date.toLocaleDateString("en-US", options);
   };
 
   const handleLogout = () => {
@@ -57,7 +61,7 @@ const MainLayout = () => {
       remarks: linkData.remarks,
       clicks: 0,
       status: "Active",
-      expirationDate: linkData.expirationDate
+      expirationDate: linkData.expirationDate,
     };
     const updatedLinks = [newLink, ...links];
     setLinks(updatedLinks);
@@ -74,15 +78,35 @@ const MainLayout = () => {
   };
 
   const handleSearch = (event) => {
-    if (event.key === 'Enter' || event.type === 'click') {
-      const searchBox = document.querySelector('.search-box');
+    if (event.key === "Enter" || event.type === "click") {
+      const searchBox = document.querySelector(".search-box");
       const searchTerm = event.target.value || searchBox.value;
-      searchBox.value = ''; // Clear the search input field
-      navigate('/dashboard/links', { state: { searchTerm, fromSearch: true } });
+      searchBox.value = ""; // Clear the search input field
+      navigate("/dashboard/links", { state: { searchTerm, fromSearch: true } });
     }
   };
 
-  const userInitials = username ? username.slice(0, 2).toUpperCase() : 'BR';
+  const handleProfileClick = () => {
+    setShowLogout(!showLogout);
+
+    if (logoutTimeoutRef.current) {
+      clearTimeout(logoutTimeoutRef.current);
+    }
+
+    logoutTimeoutRef.current = setTimeout(() => {
+      setShowLogout(false);
+    }, 2000);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (logoutTimeoutRef.current) {
+        clearTimeout(logoutTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  const userInitials = username ? username.slice(0, 2).toUpperCase() : "BR";
 
   return (
     <div className="dashboard-container">
@@ -99,7 +123,12 @@ const MainLayout = () => {
           </span>
         </button>
         <div className="search">
-          <img className="search-logo" src="/assets/search.png" alt="" onClick={handleSearch} />
+          <img
+            className="search-logo"
+            src="/assets/search.png"
+            alt=""
+            onClick={handleSearch}
+          />
           <input
             className="search-box"
             type="text"
@@ -109,10 +138,7 @@ const MainLayout = () => {
         </div>
 
         <div className="user-profile">
-          <button
-            className="user-initials"
-            onClick={() => setShowLogout(!showLogout)}
-          >
+          <button className="user-initials" onClick={handleProfileClick}>
             {userInitials}
           </button>
           {showLogout && (
@@ -170,12 +196,12 @@ const MainLayout = () => {
           </div>
         </aside>
         <main className="content">
-        {location.pathname === '/dashboard/links' ? (
-          <Links ref={linksRef} />
-        ) : (
-          <Outlet />
-        )}
-      </main>
+          {location.pathname === "/dashboard/links" ? (
+            <Links ref={linksRef} />
+          ) : (
+            <Outlet />
+          )}
+        </main>
       </div>
 
       {showCreateLink && (

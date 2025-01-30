@@ -11,25 +11,25 @@
   padding: 0px !important;
   border-radius: 10px !important;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  overflow: auto;
-  height: 84.2%;
+  height: auto;
 }
 
 .analytics-table {
   width: 100%;
-  height: 60px;
+  height: auto !important;
   border-collapse: collapse;
   background-color: transparent;
   border-radius: 8px;
   overflow: hidden;
+  margin-bottom: 50px;
 }
 
 .analytics-table th,
 .analytics-table td {
   text-align: left;
-  padding: 14px;
+  padding: 8px 12px;
   border-bottom: 1px solid #f0f0f0;
-  width: 14%; /* Ensure all columns are of equal width */
+  width: 14%;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -44,11 +44,11 @@
   font-size: 14px;
   color: #666;
   font-weight: 600;
-  padding-left: 25px;
+  padding-left: 15px;
   padding-right: 0;
   position: sticky;
   top: 0;
-  background-color: #F3F7FD !important;
+  background-color: #f3f7fd !important;
   z-index: 1;
 }
 
@@ -68,6 +68,7 @@
 .analytics-table tbody tr {
   background-color: #ffffff;
   border-bottom: 1px solid #f0f0f0;
+  height: 45px;
 }
 
 .analytics-table tbody tr td {
@@ -211,7 +212,7 @@ copy-button:hover {
   width: 220px;
   height: 50px;
   background-color: white;
-  border: 1px solid #1B48DA;
+  border: 1px solid #1b48da;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -235,6 +236,7 @@ copy-button:hover {
   transform: translateX(-50%);
   display: flex;
   gap: 5px;
+  margin-top: 20px;
 }
 
 .page-number,
@@ -247,7 +249,7 @@ copy-button:hover {
 }
 
 .page-number.active {
-  background-color: #1B48DA;
+  background-color: #1b48da;
   color: white;
-  border: 1px solid #1B48DA;
+  border: 1px solid #1b48da;
 }

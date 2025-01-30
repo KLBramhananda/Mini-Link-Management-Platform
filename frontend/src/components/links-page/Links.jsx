@@ -146,7 +146,7 @@ const Links = forwardRef((props, ref) => {
     };
 
     try {
-      await axios.post(`https://mini-link-management-platform-server.vercel.app/api/links/create`, newLink); // Revert to original URL
+      await axios.post(`${process.env.REACT_APP_BASE_URL}/api/links/create`, newLink); // Revert to original URL
       const updatedLinks = [newLink, ...links];
       setLinks(updatedLinks);
       localStorage.setItem(`${username}_links`, JSON.stringify(updatedLinks));
@@ -210,7 +210,7 @@ const Links = forwardRef((props, ref) => {
 
   const handleLinkClick = async (shortLink) => {
     try {
-      const response = await axios.get(`https://mini-link-management-platform-server.vercel.app/api/links/click/${shortLink}`); // Revert to original URL
+      const response = await axios.get(`${process.env.REACT_APP_BASE_URL}/api/links/click/${shortLink}`); // Revert to original URL
       const updatedLinks = links.map(link =>
         link.shortLink === shortLink ? { ...link, clicks: link.clicks + 1 } : link
       );

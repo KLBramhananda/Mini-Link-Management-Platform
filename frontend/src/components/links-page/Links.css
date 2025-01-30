@@ -13,13 +13,12 @@
   padding: 0px !important;
   border-radius: 10px !important;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  overflow: auto; /* Enable scrolling */
-  height: 89.3%;
+  height: auto; /* Remove fixed height */
 }
 
 .links-table {
   width: 100%;
-  height: 60px; /* Set a fixed height for the table */
+  height: auto !important; /* Remove fixed height */
   border-collapse: collapse;
   background-color: transparent;
   border-radius: 8px;
@@ -29,7 +28,7 @@
 .links-table th,
 .links-table td {
   text-align: left;
-  padding: 12px;
+  padding: 8px 12px; /* Slightly reduced padding */
   border-bottom: 1px solid #f0f0f0;
   width: 14%; /* Ensure all columns are of equal width */
   white-space: nowrap;
@@ -46,11 +45,11 @@
   font-size: 14px;
   color: #666;
   font-weight: 600;
-  padding-left: 27px;
+  padding-left: 13px;
   padding-right: 0;
   position: sticky; /* Make the header sticky */
   top: 0; /* Stick to the top */
-  background-color: #F3F7FD !important; /* Match the background color */
+  background-color: #f3f7fd !important; /* Match the background color */
   z-index: 1; /* Ensure it stays above the table body */
 }
 
@@ -69,8 +68,9 @@
 }
 
 .links-table tbody tr {
-  background-color: #ffffff; /* Set tbody tr background color to white */
+  background-color: #ffffff;
   border-bottom: 1px solid #f0f0f0;
+  height: 45px; /* Reduced from 50px to 45px */
 }
 
 .links-table tbody tr td {
@@ -83,7 +83,9 @@
 
 .links-table tbody tr td .text-content {
   display: inline-block;
-  max-width: calc(100% - 50px); /* Adjust width to leave space for the icon and colon */
+  max-width: calc(
+    100% - 50px
+  ); /* Adjust width to leave space for the icon and colon */
   overflow: hidden;
   vertical-align: middle;
   white-space: nowrap;
@@ -100,6 +102,7 @@
 
 .links-table tbody tr td .copy-button img {
   max-width: 20px;
+  margin-top: 3px;
   height: auto;
 }
 
@@ -181,7 +184,7 @@ copy-button:hover {
   border-radius: 8px;
   text-align: center;
 }
-.delete-modal h3{
+.delete-modal h3 {
   margin-top: 50px;
   margin-bottom: 40px !important;
   font-size: 15px;
@@ -219,7 +222,6 @@ copy-button:hover {
   color: white;
 }
 
-
 .copy-modal {
   position: fixed;
   bottom: 40px;
@@ -227,7 +229,7 @@ copy-button:hover {
   width: 220px; /* Same width as the sidebar menu */
   height: 50px; /* Adjust height as needed */
   background-color: white;
-  border: 1px solid #1B48DA;
+  border: 1px solid #1b48da;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -263,9 +265,9 @@ copy-button:hover {
 }
 
 .page-number.active {
-  background-color: #1B48DA;
+  background-color: #1b48da;
   color: white;
-  border: 1px solid #1B48DA;
+  border: 1px solid #1b48da;
 }
 
 .highlight {
@@ -278,4 +280,28 @@ copy-button:hover {
 .links-table td.remarks {
   overflow: hidden;
   white-space: nowrap;
+}
+
+/* Mobile Styles */
+@media screen and (max-width: 600px) {
+  .links-container {
+    margin: 10px;
+    overflow-x: auto; /* Enable horizontal scrolling */
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+  }
+
+  .links-table {
+    min-width: 1000px; /* Ensure table maintains minimum width */
+  }
+
+  /* Ensure the pagination stays visible at the bottom */
+  .pagination {
+    position: fixed;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: white;
+    padding: 10px;
+    z-index: 2;
+  }
 }
