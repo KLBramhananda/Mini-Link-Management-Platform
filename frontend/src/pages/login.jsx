@@ -20,11 +20,7 @@ const Login = () => {
 
     try {
       const response = await axios.post(
-<<<<<<< HEAD
-        `https://mini-link-management-platform-server.vercel.app/api/users/login`, // Revert to original URL
-=======
         `${process.env.REACT_APP_BASE_URL}/api/users/login`,
->>>>>>> ce516eb (changes updated)
         {
           email: formData.email,
           password: formData.password,

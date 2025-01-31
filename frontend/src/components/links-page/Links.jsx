@@ -242,15 +242,6 @@ const Links = forwardRef((props, ref) => {
 
   const handleCreateLink = async (linkData) => {
     try {
-<<<<<<< HEAD
-      await axios.post(
-        `https://mini-link-management-platform-server.vercel.app/api/links/create`,
-        newLink
-      ); // Revert to original URL
-      const updatedLinks = [newLink, ...links];
-      setLinks(updatedLinks);
-      localStorage.setItem(`${username}_links`, JSON.stringify(updatedLinks));
-=======
       const userId = localStorage.getItem("userId");
 
       console.log("Creating link with data:", linkData);
@@ -279,7 +270,6 @@ const Links = forwardRef((props, ref) => {
 
       // Refresh the dashboard
       window.dispatchEvent(new Event("refreshDashboard"));
->>>>>>> ce516eb (changes updated)
     } catch (error) {
       console.error("Link Creation Error:", error.response?.data || error);
     }
@@ -386,15 +376,10 @@ const Links = forwardRef((props, ref) => {
   const handleLinkClick = async (shortLink) => {
     try {
       const response = await axios.get(
-<<<<<<< HEAD
-        `https://mini-link-management-platform-server.vercel.app/api/links/click/${shortLink}`
-      ); // Revert to original URL
-=======
         `${process.env.REACT_APP_BASE_URL}/api/links/click/${shortLink}`
       );
 
       // Update the clicks count in the local state
->>>>>>> ce516eb (changes updated)
       const updatedLinks = links.map((link) =>
         link.shortLink === shortLink
           ? { ...link, clicks: link.clicks + 1 }
