@@ -170,7 +170,7 @@ exports.updateLink = async (req, res) => {
     // Create update object with only defined values
     const updateData = {};
 
-    if (originalLink) {
+    if (originalLink !== undefined) {
       // Format the URL if needed
       updateData.originalLink =
         !originalLink.startsWith("http://") &&

@@ -12,9 +12,11 @@ const CreateLink = ({ onClose, onSubmit, initialData, isEditMode }) => {
 
   useEffect(() => {
     if (initialData && isEditMode) {
-      setDestinationUrl(initialData.destinationUrl || "");
+      setDestinationUrl(
+        initialData.originalLink || initialData.destinationUrl || ""
+      );
       setRemarks(initialData.remarks || "");
-      setLinkExpiration(initialData.linkExpiration);
+      setLinkExpiration(!!initialData.expirationDate);
       setExpirationDate(initialData.expirationDate || getCurrentDateTime());
     } else {
       setExpirationDate(getCurrentDateTime());
@@ -66,6 +68,7 @@ const CreateLink = ({ onClose, onSubmit, initialData, isEditMode }) => {
 
         const linkData = {
           originalLink: destinationUrl,
+          destinationUrl: destinationUrl,
           remarks,
           expirationDate: linkExpiration ? expirationDate : null,
           device: device,
