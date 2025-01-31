@@ -375,21 +375,31 @@ const Links = forwardRef((props, ref) => {
 
   const handleLinkClick = async (shortLink) => {
     try {
+      // Optimistically update the click count immediately
+      setLinks((prevLinks) =>
+        prevLinks.map((link) =>
+          link.shortLink === shortLink
+            ? { ...link, clicks: (link.clicks || 0) + 1 }
+            : link
+        )
+      );
+
+      // Then make the API call
       const response = await axios.get(
         `${process.env.REACT_APP_BASE_URL}/api/links/click/${shortLink}`
       );
 
-      // Update the clicks count in the local state
-      const updatedLinks = links.map((link) =>
-        link.shortLink === shortLink
-          ? { ...link, clicks: link.clicks + 1 }
-          : link
-      );
-      setLinks(updatedLinks);
-
       // Open the original URL in a new tab
       window.open(response.data.destinationUrl, "_blank");
     } catch (error) {
+      // If the API call fails, revert the optimistic update
+      setLinks((prevLinks) =>
+        prevLinks.map((link) =>
+          link.shortLink === shortLink
+            ? { ...link, clicks: (link.clicks || 0) - 1 }
+            : link
+        )
+      );
       console.error("Failed to handle link click:", error);
     }
   };
@@ -548,7 +558,7 @@ const Links = forwardRef((props, ref) => {
                 }}
                 className="original-link"
               >
-                {link.originalLink}
+                {link.originalLink.replace(/^https?:\/\//, "")}
               </td>
               <td
                 style={{

@@ -11,6 +11,10 @@ const linkSchema = new Schema({
     type: String,
     required: true,
   },
+  destinationUrl: {
+    type: String,
+    required: true,
+  },
   shortLink: {
     type: String,
     required: true,

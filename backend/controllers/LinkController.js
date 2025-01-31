@@ -22,7 +22,10 @@ exports.createLink = async (req, res) => {
       ipAddress || req.headers["x-forwarded-for"] || req.socket.remoteAddress;
     const formattedIp = clientIp.replace(/^.*:/, "");
 
-    // Ensure originalLink has http:// or https://
+    // Store the original link as provided by the user
+    const displayOriginalLink = originalLink;
+
+    // Add https:// only for the functional URL if needed
     let formattedOriginalLink = originalLink;
     if (
       !originalLink.startsWith("http://") &&
@@ -47,7 +50,8 @@ exports.createLink = async (req, res) => {
 
     const newLink = new Link({
       userId: new ObjectId(userId),
-      originalLink: formattedOriginalLink,
+      originalLink: displayOriginalLink,
+      destinationUrl: formattedOriginalLink,
       shortLink,
       remarks,
       expirationDate,
@@ -89,7 +93,11 @@ exports.handleLinkClick = async (req, res) => {
     const shortLink = `${req.protocol}://${req.get("host")}/${
       req.params.shortLink
     }`;
-    const link = await Link.findOne({ shortLink });
+    const link = await Link.findOneAndUpdate(
+      { shortLink },
+      { $inc: { clicks: 1 } },
+      { new: true }
+    );
 
     if (!link) {
       return res.status(404).json({ error: "Link not found" });
@@ -99,10 +107,6 @@ exports.handleLinkClick = async (req, res) => {
     if (link.expirationDate && new Date(link.expirationDate) < new Date()) {
       return res.status(410).json({ error: "Link has expired" });
     }
-
-    // Increment clicks
-    link.clicks += 1;
-    await link.save();
 
     // Return the destination URL
     res.json({ destinationUrl: link.originalLink });
