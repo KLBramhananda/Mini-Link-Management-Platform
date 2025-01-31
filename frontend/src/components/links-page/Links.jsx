@@ -94,7 +94,7 @@ const Links = forwardRef((props, ref) => {
 
       try {
         const response = await axios.get(
-          `https://mini-link-management-platform-server.vercel.app/api/links`,
+          `${process.env.REACT_APP_BASE_URL}/api/links`,
           {
             headers: {
               "user-id": userId,
@@ -204,7 +204,7 @@ const Links = forwardRef((props, ref) => {
         }
 
         const response = await axios.get(
-          `https://mini-link-management-platform-server.vercel.app/api/links`,
+          `${process.env.REACT_APP_BASE_URL}/api/links`,
           {
             headers: {
               "user-id": userId,
@@ -247,7 +247,7 @@ const Links = forwardRef((props, ref) => {
       console.log("Creating link with data:", linkData);
 
       const response = await axios.post(
-        `https://mini-link-management-platform-server.vercel.app/api/links/create`,
+        `${process.env.REACT_APP_BASE_URL}/api/links/create`,
         {
           originalLink: linkData.originalLink,
           remarks: linkData.remarks,
@@ -298,7 +298,7 @@ const Links = forwardRef((props, ref) => {
   const confirmDelete = async () => {
     try {
       await axios.delete(
-        `https://mini-link-management-platform-server.vercel.app/api/links/${deleteId}`,
+        `${process.env.REACT_APP_BASE_URL}/api/links/${deleteId}`,
         {
           headers: {
             "user-id": userId,
@@ -321,7 +321,7 @@ const Links = forwardRef((props, ref) => {
       console.log("Sending update with data:", updatedData);
 
       const response = await axios.put(
-        `https://mini-link-management-platform-server.vercel.app/api/links/${editingLink._id}`,
+        `${process.env.REACT_APP_BASE_URL}/api/links/${editingLink._id}`,
         {
           originalLink: updatedData.destinationUrl,
           remarks: updatedData.remarks,
@@ -376,7 +376,7 @@ const Links = forwardRef((props, ref) => {
   const handleLinkClick = async (shortLink) => {
     try {
       const response = await axios.get(
-        `https://mini-link-management-platform-server.vercel.app/api/links/click/${shortLink}`
+        `${process.env.REACT_APP_BASE_URL}/api/links/click/${shortLink}`
       );
 
       // Update the clicks count in the local state

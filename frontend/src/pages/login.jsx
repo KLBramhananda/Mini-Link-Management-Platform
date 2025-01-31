@@ -20,7 +20,7 @@ const Login = () => {
 
     try {
       const response = await axios.post(
-        `https://mini-link-management-platform-server.vercel.app/`,
+        `${process.env.REACT_APP_BASE_URL}/api/users/login`,
         {
           email: formData.email,
           password: formData.password,
