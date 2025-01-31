@@ -275,7 +275,20 @@ copy-button:hover {
 }
 
 .highlight {
-  background-color: yellow;
+  background-color: #fff3cd;
+  animation: fadeHighlight 2s ease-in-out;
+}
+
+@keyframes fadeHighlight {
+  0% {
+    background-color: #fff3cd;
+  }
+  70% {
+    background-color: #fff3cd;
+  }
+  100% {
+    background-color: transparent;
+  }
 }
 
 .links-table th.original-link,

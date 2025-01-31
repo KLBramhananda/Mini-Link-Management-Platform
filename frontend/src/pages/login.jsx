@@ -17,35 +17,48 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Environment URL:", process.env.REACT_APP_BASE_URL)
-    
+
     try {
       const response = await axios.post(
+<<<<<<< HEAD
         `https://mini-link-management-platform-server.vercel.app/api/users/login`, // Revert to original URL
+=======
+        `${process.env.REACT_APP_BASE_URL}/api/users/login`,
+>>>>>>> ce516eb (changes updated)
         {
           email: formData.email,
-          password: formData.password
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json'
-          }
+          password: formData.password,
         }
       );
 
-      // Store token and navigate to dashboard
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('username', response.data.user.username);
-      navigate('/dashboard');
+      if (response.data && response.data.user && response.data.user.id) {
+        // Clear any existing data first
+        localStorage.clear();
+
+        // Then set new user data
+        localStorage.setItem("token", response.data.token);
+        localStorage.setItem("username", response.data.user.username);
+        localStorage.setItem("email", response.data.user.email);
+        localStorage.setItem("phone", response.data.user.phone);
+        localStorage.setItem("userId", response.data.user.id);
+
+        // Force reload the application state
+        window.dispatchEvent(new Event("storage"));
+
+        navigate("/dashboard");
+      } else {
+        console.error("Invalid response format:", response.data);
+        setError("Login failed - invalid response format");
+      }
     } catch (error) {
-      console.error('Login Error:', error.response?.data);
+      console.error("Login Error:", error.response?.data);
       setError(error.response?.data?.error || "Login failed");
     }
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    navigate('/');
+    localStorage.removeItem("token");
+    navigate("/");
   };
 
   return (
@@ -56,20 +69,12 @@ const Login = () => {
       </div>
       <div className="right-side">
         <div className="buttons">
-          <button
-            id="signup"
-            onClick={() => navigate("/signup")}
-          >
+          <button id="signup" onClick={() => navigate("/signup")}>
             SignUp
           </button>
-          <button
-            id="login"
-            className="active"
-            onClick={() => navigate("/")}
-          >
+          <button id="login" className="active" onClick={() => navigate("/")}>
             Login
           </button>
-
         </div>
         <h1>Login</h1>
         <div className="login__container">
@@ -90,14 +95,14 @@ const Login = () => {
               onChange={handleChange}
             />
             <br />
-            {error && <p style={{ color: 'red' }}>{error}</p>}
-            <button className="login__signInButton" type="submit">Register</button>
+            {error && <p style={{ color: "red" }}>{error}</p>}
+            <button className="login__signInButton" type="submit">
+              Register
+            </button>
           </form>
           <h5 className="login__registerButton">
             Don't have an account?{" "}
-            <span onClick={() => navigate("/signup")}>
-              SignUp
-            </span>
+            <span onClick={() => navigate("/signup")}>SignUp</span>
           </h5>
         </div>
       </div>

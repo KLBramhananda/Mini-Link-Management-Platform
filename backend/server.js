@@ -15,7 +15,7 @@ app.use(
   cors({
     origin: ["https://mini-link-management-platform-front.vercel.app"], //https://mini-link-management-platform-front.vercel.app
     methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    allowedHeaders: ["Content-Type", "Authorization", "user-id"],
   })
 );
 
@@ -51,8 +51,6 @@ app.get("/", (req, res) => {
 app.get("/:shortUrl", async (req, res) => {
   try {
     const shortLink = `http://localhost:5000/${req.params.shortUrl}`;
-    console.log("Looking for shortLink:", shortLink);
-
     const link = await Link.findOne({ shortLink });
 
     if (!link) {
@@ -97,8 +95,15 @@ app.get("/:shortUrl", async (req, res) => {
 
 // Add this new endpoint
 app.get("/api/ip", (req, res) => {
-  const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
-  res.json({ ip });
+  const ip =
+    req.headers["x-forwarded-for"] ||
+    req.connection.remoteAddress ||
+    req.socket.remoteAddress ||
+    req.connection.socket.remoteAddress;
+
+  // Format the IP address
+  const formattedIp = ip.replace(/^.*:/, "");
+  res.json({ ip: formattedIp });
 });
 
 // Start the server

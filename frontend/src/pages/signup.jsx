@@ -45,11 +45,19 @@ const Signup = () => {
         password: formData.password,
       });
 
-      console.log("Registration Response:", response.data);
+      // Clear any existing data first
+      localStorage.clear();
+
+      // Set new user data
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("username", formData.username);
-      localStorage.setItem("email", formData.email); // Store email
-      localStorage.setItem("phone", formData.phone); // Store phone
+      localStorage.setItem("email", formData.email);
+      localStorage.setItem("phone", formData.phone);
+      localStorage.setItem("userId", response.data.userId); // Make sure this is being sent from backend
+
+      // Force reload the application state
+      window.dispatchEvent(new Event("storage"));
+
       navigate("/dashboard");
     } catch (error) {
       console.error("Registration Error:", {

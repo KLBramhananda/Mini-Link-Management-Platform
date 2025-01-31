@@ -1,78 +1,124 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
+import axios from "axios";
 
 const Dashboard = () => {
   const [totalLinks, setTotalLinks] = useState(0);
-  const [dateWiseClicks, setDateWiseClicks] = useState([]);
-  const [deviceWiseClicks, setDeviceWiseClicks] = useState({
+  const [dateWiseLinks, setDateWiseLinks] = useState([]);
+  const [deviceWiseLinks, setDeviceWiseLinks] = useState({
     mobile: 0,
     desktop: 0,
     tablet: 0,
   });
+  const [links, setLinks] = useState([]);
 
-  useEffect(() => {
-    const username = localStorage.getItem("username") || "";
-    const storedLinks =
-      JSON.parse(localStorage.getItem(`${username}_links`)) || [];
-    setTotalLinks(storedLinks.length);
+  const processLinks = useCallback((linksData) => {
+    // Update total links
+    setTotalLinks(linksData.length);
 
-    const clicksByDate = storedLinks.reduce((acc, link) => {
-      const date = new Date(link.date).toLocaleDateString("en-US");
-      if (!acc[date]) {
-        acc[date] = 0;
-      }
-      acc[date] += 1;
+    // Process date-wise links
+    const linksByDate = linksData.reduce((acc, link) => {
+      const date = new Date(link.createdAt).toLocaleDateString("en-US");
+      acc[date] = (acc[date] || 0) + 1;
       return acc;
     }, {});
 
-    const cumulativeClicksArray = [];
-    let cumulativeCount = 0;
-    Object.keys(clicksByDate)
-      .sort()
-      .forEach((date) => {
-        cumulativeCount += clicksByDate[date];
-        cumulativeClicksArray.push({ date, count: cumulativeCount });
-      });
+    const dateWiseArray = Object.entries(linksByDate)
+      .map(([date, count]) => ({ date, count }))
+      .sort((a, b) => new Date(b.date) - new Date(a.date));
 
-    setDateWiseClicks(cumulativeClicksArray.reverse());
+    setDateWiseLinks(dateWiseArray);
 
-    const clicksByDevice = storedLinks.reduce(
+    // Process device-wise links
+    const linksByDevice = linksData.reduce(
       (acc, link) => {
-        // Normalize the device name to match our default categories
-        let device = (link.device || "desktop").toLowerCase();
-        // Ensure device is one of our three categories
-        if (!["mobile", "desktop", "tablet"].includes(device)) {
-          device = "desktop"; // Default fallback
-        }
+        let device = (link.analytics?.device || "Desktop").toLowerCase();
+        if (device.includes("mobile")) device = "mobile";
+        else if (device.includes("tablet")) device = "tablet";
+        else device = "desktop";
         acc[device] = (acc[device] || 0) + 1;
         return acc;
       },
       { mobile: 0, desktop: 0, tablet: 0 }
     );
 
-    setDeviceWiseClicks(clicksByDevice);
+    setDeviceWiseLinks(linksByDevice);
   }, []);
 
-  const maxCount = 100;
+  const fetchDashboardData = useCallback(async () => {
+    try {
+      const userId = localStorage.getItem("userId");
+      if (!userId) {
+        setLinks([]);
+        setTotalLinks(0);
+        setDateWiseLinks([]);
+        setDeviceWiseLinks({ mobile: 0, desktop: 0, tablet: 0 });
+        return;
+      }
+
+      const response = await axios.get(
+        `${process.env.REACT_APP_BASE_URL}/api/links`,
+        {
+          headers: {
+            "user-id": userId,
+          },
+        }
+      );
+
+      setLinks(response.data);
+      processLinks(response.data);
+    } catch (error) {
+      console.error("Error fetching dashboard data:", error);
+      setLinks([]);
+      setTotalLinks(0);
+      setDateWiseLinks([]);
+      setDeviceWiseLinks({ mobile: 0, desktop: 0, tablet: 0 });
+    }
+  }, [processLinks]);
+
+  useEffect(() => {
+    fetchDashboardData();
+
+    const handleRefresh = () => {
+      fetchDashboardData();
+    };
+
+    const handleLinkCreated = (event) => {
+      // Immediately update the local state with the new link
+      setLinks((prevLinks) => {
+        const newLinks = [...prevLinks, event.detail];
+        processLinks(newLinks);
+        return newLinks;
+      });
+    };
+
+    window.addEventListener("refreshDashboard", handleRefresh);
+    window.addEventListener("linkCreated", handleLinkCreated);
+
+    return () => {
+      window.removeEventListener("refreshDashboard", handleRefresh);
+      window.removeEventListener("linkCreated", handleLinkCreated);
+    };
+  }, [fetchDashboardData, processLinks]);
 
   return (
     <>
       <div className="total-links">
         <h2>
-          Total Clicks <span>{totalLinks}</span>
+          Total Links <span>{totalLinks}</span>
         </h2>
       </div>
       <div className="charts">
         <div className="chart date-wise">
-          <h3>Date-wise Clicks</h3>
+          <h3>Links Created by Date</h3>
           <ul className="chart-bars">
-            {dateWiseClicks.map((item) => (
+            {dateWiseLinks.map((item) => (
               <li key={item.date}>
                 <span className="date">{item.date}</span>
                 <div className="bar">
                   <span
                     style={{
                       display: "inline-block",
-                      width: `${(item.count / maxCount) * 100}%`,
+                      width: `${item.count}%`,
                       backgroundColor: "blue",
                       height: "10px",
                     }}
@@ -84,9 +130,9 @@ const Dashboard = () => {
           </ul>
         </div>
         <div className="chart devices">
-          <h3>Click Devices</h3>
+          <h3>Links Created by Device</h3>
           <ul className="chart-bars">
-            {Object.keys(deviceWiseClicks).map((device) => (
+            {Object.entries(deviceWiseLinks).map(([device, count]) => (
               <li key={device}>
                 <span className="device">
                   {device.charAt(0).toUpperCase() + device.slice(1)}
@@ -95,13 +141,13 @@ const Dashboard = () => {
                   <span
                     style={{
                       display: "inline-block",
-                      width: `${(deviceWiseClicks[device] / maxCount) * 100}%`,
+                      width: `${count}%`,
                       backgroundColor: "blue",
                       height: "10px",
                     }}
                   ></span>
                 </div>
-                <span className="count">{deviceWiseClicks[device]}</span>
+                <span className="count">{count}</span>
               </li>
             ))}
           </ul>

@@ -40,16 +40,7 @@ exports.register = async (req, res) => {
       password: hashedPassword,
     });
 
-    // save logging
-    await newUser
-      .save()
-      .then((savedUser) => {
-        console.log("User saved successfully:", savedUser);
-      })
-      .catch((saveError) => {
-        console.error("Save Error:", saveError);
-        throw saveError;
-      });
+    await newUser.save();
 
     const token = jwt.sign({ id: newUser._id }, SECRET_KEY, {
       expiresIn: "1h",
@@ -59,6 +50,11 @@ exports.register = async (req, res) => {
       message: "User registered successfully",
       token,
       userId: newUser._id,
+      user: {
+        id: newUser._id,
+        username: newUser.username,
+        email: newUser.email,
+      },
     });
   } catch (error) {
     console.error("Full Registration Error:", {
@@ -67,7 +63,6 @@ exports.register = async (req, res) => {
       name: error.name,
     });
 
-    //  error handling
     if (error.name === "ValidationError") {
       return res.status(400).json({
         error: "Validation failed",
@@ -104,6 +99,7 @@ exports.login = async (req, res) => {
         id: user._id,
         username: user.username,
         email: user.email,
+        phone: user.phone,
       },
     });
   } catch (error) {

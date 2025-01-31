@@ -34,6 +34,16 @@ const MainLayout = () => {
     return () => clearInterval(intervalId);
   }, [username]);
 
+  useEffect(() => {
+    const userId = localStorage.getItem("userId");
+    const token = localStorage.getItem("token");
+
+    if (!userId || !token) {
+      console.log("No authentication data found, redirecting to login");
+      navigate("/login");
+    }
+  }, [navigate]);
+
   const formatDate = (date) => {
     const options = { weekday: "short", month: "short", day: "numeric" };
     return date.toLocaleDateString("en-US", options);
@@ -53,37 +63,6 @@ const MainLayout = () => {
     if (linksRef.current && linksRef.current.addNewLink) {
       linksRef.current.addNewLink(linkData);
     }
-
-    const newLink = {
-      id: Date.now(),
-      date: new Date().toLocaleString(),
-      originalLink: linkData.destinationUrl,
-      remarks: linkData.remarks,
-      clicks: 0,
-      status: "Active",
-      expirationDate: linkData.expirationDate,
-    };
-
-    fetch(`${process.env.REACT_APP_API_URL}/api/links/create`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        originalLink: linkData.destinationUrl,
-        remarks: linkData.remarks,
-        expirationDate: linkData.expirationDate,
-      }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        const updatedLink = { ...newLink, shortLink: data.link.shortLink };
-        const updatedLinks = [updatedLink, ...links];
-        setLinks(updatedLinks);
-        localStorage.setItem(`${username}_links`, JSON.stringify(updatedLinks));
-      })
-      .catch((error) => console.error("Error creating link:", error));
-
     setShowCreateLink(false);
   };
 

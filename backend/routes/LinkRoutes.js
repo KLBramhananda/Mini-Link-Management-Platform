@@ -7,5 +7,7 @@ const router = express.Router();
 router.post("/create", LinkController.createLink);
 router.get("/click/:shortLink", LinkController.handleLinkClick);
 router.get("/", LinkController.getAllLinks);
+router.put("/:id", LinkController.updateLink);
+router.delete("/:id", LinkController.deleteLink);
 
 module.exports = router;

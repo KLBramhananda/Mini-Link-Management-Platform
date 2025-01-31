@@ -17,6 +17,9 @@ const Links = forwardRef((props, ref) => {
   const [deleteId, setDeleteId] = useState(null);
   const [showCopyModal, setShowCopyModal] = useState(false);
   const username = localStorage.getItem("username") || "";
+  const [userId, setUserId] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   const [currentPage, setCurrentPage] = useState(1);
   const linksPerPage = 10;
@@ -42,109 +45,204 @@ const Links = forwardRef((props, ref) => {
     setSortConfig({ key, direction });
   };
 
-  const sortedLinks = [...currentLinks].sort((a, b) => {
-    if (sortConfig.key === "date") {
-      const dateA = new Date(a.date);
-      const dateB = new Date(b.date);
-      return sortConfig.direction === "asc" ? dateA - dateB : dateB - dateA;
-    } else if (sortConfig.key === "status") {
-      const statusOrder = { Active: 1, Inactive: 2 };
-      const orderA = statusOrder[a.status];
-      const orderB = statusOrder[b.status];
-      return sortConfig.direction === "asc" ? orderA - orderB : orderB - orderA;
-    }
-    return 0;
-  });
+  const sortedLinks = React.useMemo(() => {
+    console.log("Sorting links:", currentLinks); // Debug log
+    return [...currentLinks].sort((a, b) => {
+      if (sortConfig.key === "date") {
+        const dateA = new Date(a.date);
+        const dateB = new Date(b.date);
+        return sortConfig.direction === "asc" ? dateA - dateB : dateB - dateA;
+      } else if (sortConfig.key === "status") {
+        const statusOrder = { Active: 1, Inactive: 2 };
+        const orderA = statusOrder[a.status];
+        const orderB = statusOrder[b.status];
+        return sortConfig.direction === "asc"
+          ? orderA - orderB
+          : orderB - orderA;
+      }
+      return 0;
+    });
+  }, [currentLinks, sortConfig]);
 
   useImperativeHandle(ref, () => ({
     addNewLink: handleCreateLink,
   }));
-
-  const generateShortLink = () => {
-    const characters =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    const length = 6;
-    let shortLink = "https://short.ly/";
-    for (let i = 0; i < length; i++) {
-      shortLink += characters.charAt(
-        Math.floor(Math.random() * characters.length)
-      );
-    }
-    return shortLink;
-  };
 
   const isLinkActive = (expirationDate) => {
     if (!expirationDate) return true;
     return new Date(expirationDate) > new Date();
   };
 
-  const formatDateTime = (date) => {
-    const options = {
-      year: "numeric",
+  const formatDateTime = (dateString) => {
+    if (!dateString) return "N/A";
+    return new Date(dateString).toLocaleString("en-US", {
       month: "short",
       day: "numeric",
+      year: "numeric",
       hour: "2-digit",
       minute: "2-digit",
-    };
-    return new Date(date)
-      .toLocaleString("en-US", options)
-      .replace(/ AM| PM/, "");
+      hour12: false,
+    });
   };
 
   const location = useLocation();
   const searchTerm = location.state?.searchTerm || "";
 
   useEffect(() => {
-    const storedLinks =
-      JSON.parse(localStorage.getItem(`${username}_links`)) || [];
-    setLinks(storedLinks);
-    if (location.state?.fromSearch && searchTerm) {
-      setTimeout(() => {
-        const searchResult = storedLinks.find((link) =>
-          link.remarks.includes(searchTerm)
-        );
-        if (searchResult) {
-          const element = document.querySelector(
-            `tr[data-id="${searchResult.id}"]`
-          );
-          if (element) {
-            element.classList.add("highlight");
-            element.scrollIntoView({ behavior: "smooth", block: "center" });
-            const rowIndex =
-              Array.from(element.parentNode.children).indexOf(element) + 1;
-            alert(`"${searchTerm}" ->  found in  ${rowIndex} row`);
+    const fetchAndSearch = async () => {
+      if (!userId) return;
+
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_BASE_URL}/api/links`,
+          {
+            headers: {
+              "user-id": userId,
+              "Content-Type": "application/json",
+            },
           }
-        } else {
-          alert(`"${searchTerm}" -> Not Found in Links Table !`);
+        );
+
+        if (response.data) {
+          const formattedLinks = response.data.map((link) => ({
+            ...link,
+            date: formatDateTime(link.createdAt),
+          }));
+          setLinks(formattedLinks);
+
+          // Handle search if coming from search
+          if (location.state?.fromSearch && searchTerm) {
+            const searchResult = formattedLinks.find((link) =>
+              link.remarks.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+
+            if (searchResult) {
+              // Calculate which page the result is on
+              const resultIndex = formattedLinks.indexOf(searchResult);
+              const targetPage = Math.floor(resultIndex / linksPerPage) + 1;
+
+              // Set the current page to show the result
+              setCurrentPage(targetPage);
+
+              // Wait for next render cycle
+              setTimeout(() => {
+                const element = document.querySelector(
+                  `tr[data-id="${searchResult._id}"]`
+                );
+                if (element) {
+                  element.classList.add("highlight");
+                  element.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center",
+                  });
+                  const rowIndex = (resultIndex % linksPerPage) + 1;
+                  alert(
+                    `"${searchTerm}" found in row ${rowIndex} of page ${targetPage}`
+                  );
+                }
+              }, 100);
+            } else {
+              alert(`"${searchTerm}" not found in Links table!`);
+            }
+          }
         }
-      }, 0); // Delay to ensure navigation completes before executing search logic
-    }
-    // Clear the state after handling the search
-    return () => {
-      if (location.state?.fromSearch) {
-        location.state.fromSearch = false;
+      } catch (error) {
+        console.error("Error fetching links:", error);
+        setLinks([]);
+      } finally {
+        setIsLoading(false);
       }
     };
-  }, [username, searchTerm, location.state?.fromSearch, location.state]);
 
-  const handleCreateLink = async (linkData) => {
-    const newLink = {
-      id: Date.now(),
-      date: formatDateTime(new Date()),
-      originalLink: linkData.destinationUrl,
-      shortLink: generateShortLink(),
-      remarks: linkData.remarks,
-      clicks: 0,
-      status:
-        linkData.linkExpiration && linkData.expirationDate
-          ? isLinkActive(linkData.expirationDate)
-            ? "Active"
-            : "Inactive"
-          : "Active",
-      expirationDate: linkData.expirationDate,
+    fetchAndSearch();
+  }, [userId, searchTerm, location.state?.fromSearch, linksPerPage]);
+
+  const getDeviceType = () => {
+    const userAgent = navigator.userAgent;
+    if (/mobile/i.test(userAgent)) {
+      return "Mobile";
+    } else if (/tablet/i.test(userAgent)) {
+      return "Tablet";
+    } else if (/ipad/i.test(userAgent)) {
+      return "iPad";
+    } else if (/android/i.test(userAgent)) {
+      return "Android";
+    } else if (/win/i.test(userAgent)) {
+      return "Desktop";
+    } else if (/mac/i.test(userAgent)) {
+      return "Mac";
+    } else if (/linux/i.test(userAgent)) {
+      return "Linux";
+    } else {
+      return "Desktop";
+    }
+  };
+
+  useEffect(() => {
+    const storedUserId = localStorage.getItem("userId");
+    console.log("Retrieved userId from localStorage:", storedUserId);
+
+    if (storedUserId) {
+      setUserId(storedUserId);
+    } else {
+      console.error("No userId found in localStorage");
+    }
+  }, []);
+
+  useEffect(() => {
+    const fetchLinks = async () => {
+      if (!userId) {
+        console.log("No userId available, skipping fetch");
+        setLinks([]); // Clear links if no userId
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        if (isInitialLoad) {
+          setIsLoading(true);
+        }
+
+        const response = await axios.get(
+          `${process.env.REACT_APP_BASE_URL}/api/links`,
+          {
+            headers: {
+              "user-id": userId,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (response.data) {
+          const formattedLinks = response.data.map((link) => ({
+            ...link,
+            date: formatDateTime(link.createdAt),
+          }));
+          setLinks(formattedLinks);
+          if (isInitialLoad) {
+            setIsInitialLoad(false);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching links:", error.response?.data || error);
+        setLinks([]); // Clear links on error
+      } finally {
+        setIsLoading(false);
+      }
     };
 
+    fetchLinks();
+    const interval = setInterval(fetchLinks, 10000);
+    return () => clearInterval(interval);
+  }, [userId, isInitialLoad]);
+
+  useEffect(() => {
+    console.log("Current links state:", links);
+  }, [links]);
+
+  const handleCreateLink = async (linkData) => {
     try {
+<<<<<<< HEAD
       await axios.post(
         `https://mini-link-management-platform-server.vercel.app/api/links/create`,
         newLink
@@ -152,15 +250,52 @@ const Links = forwardRef((props, ref) => {
       const updatedLinks = [newLink, ...links];
       setLinks(updatedLinks);
       localStorage.setItem(`${username}_links`, JSON.stringify(updatedLinks));
+=======
+      const userId = localStorage.getItem("userId");
+
+      console.log("Creating link with data:", linkData);
+
+      const response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}/api/links/create`,
+        {
+          originalLink: linkData.originalLink,
+          remarks: linkData.remarks,
+          expirationDate: linkData.expirationDate,
+          device: linkData.device,
+          ipAddress: linkData.ipAddress,
+        },
+        {
+          headers: {
+            "user-id": userId,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      console.log("Link created successfully:", response.data);
+
+      // Add new link to the beginning of the array
+      setLinks((prevLinks) => [response.data.link, ...prevLinks]);
+
+      // Refresh the dashboard
+      window.dispatchEvent(new Event("refreshDashboard"));
+>>>>>>> ce516eb (changes updated)
     } catch (error) {
-      console.error("Link Creation Error:", error);
+      console.error("Link Creation Error:", error.response?.data || error);
     }
   };
 
   const handleEdit = (link) => {
+    console.log("Editing link:", link);
     setEditingLink({
-      ...link,
-      destinationUrl: link.originalLink, // Map for CreateLink component
+      _id: link._id,
+      destinationUrl: link.originalLink,
+      remarks: link.remarks,
+      linkExpiration: !!link.expirationDate,
+      expirationDate: link.expirationDate
+        ? new Date(link.expirationDate).toISOString().slice(0, 16)
+        : null,
+      shortLink: link.shortLink,
     });
     setShowCreateLink(true);
   };
@@ -170,34 +305,72 @@ const Links = forwardRef((props, ref) => {
     setShowDeleteModal(true);
   };
 
-  const confirmDelete = () => {
-    const updatedLinks = links.filter((link) => link.id !== deleteId);
-    setLinks(updatedLinks);
-    localStorage.setItem(`${username}_links`, JSON.stringify(updatedLinks));
-    setShowDeleteModal(false);
+  const confirmDelete = async () => {
+    try {
+      await axios.delete(
+        `${process.env.REACT_APP_BASE_URL}/api/links/${deleteId}`,
+        {
+          headers: {
+            "user-id": userId,
+          },
+        }
+      );
+
+      setLinks((prevLinks) =>
+        prevLinks.filter((link) => link._id !== deleteId)
+      );
+      setShowDeleteModal(false);
+      setDeleteId(null);
+    } catch (error) {
+      console.error("Delete Error:", error);
+    }
   };
 
-  const handleUpdate = (updatedData) => {
-    const updatedLinks = links.map((link) =>
-      link.id === editingLink.id
-        ? {
-            ...link,
-            originalLink: updatedData.destinationUrl,
-            remarks: updatedData.remarks,
-            expirationDate: updatedData.expirationDate,
-            status:
-              updatedData.linkExpiration && updatedData.expirationDate
-                ? isLinkActive(updatedData.expirationDate)
-                  ? "Active"
-                  : "Inactive"
-                : "Active",
-          }
-        : link
-    );
-    setLinks(updatedLinks);
-    localStorage.setItem(`${username}_links`, JSON.stringify(updatedLinks));
-    setShowCreateLink(false);
-    setEditingLink(null);
+  const handleUpdate = async (updatedData) => {
+    try {
+      console.log("Sending update with data:", updatedData);
+
+      const response = await axios.put(
+        `${process.env.REACT_APP_BASE_URL}/api/links/${editingLink._id}`,
+        {
+          originalLink: updatedData.destinationUrl,
+          remarks: updatedData.remarks,
+          expirationDate: updatedData.expirationDate,
+        },
+        {
+          headers: {
+            "user-id": userId,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.data) {
+        // Update the link in the local state
+        setLinks((prevLinks) =>
+          prevLinks.map((link) =>
+            link._id === editingLink._id
+              ? {
+                  ...link,
+                  originalLink: updatedData.destinationUrl,
+                  remarks: updatedData.remarks,
+                  expirationDate: updatedData.expirationDate,
+                  status: updatedData.expirationDate
+                    ? new Date(updatedData.expirationDate) > new Date()
+                      ? "Active"
+                      : "Inactive"
+                    : "Active",
+                }
+              : link
+          )
+        );
+
+        setShowCreateLink(false);
+        setEditingLink(null);
+      }
+    } catch (error) {
+      console.error("Update Error:", error.response?.data || error);
+    }
   };
 
   const handleCopyLink = async (shortLink) => {
@@ -213,18 +386,26 @@ const Links = forwardRef((props, ref) => {
   const handleLinkClick = async (shortLink) => {
     try {
       const response = await axios.get(
+<<<<<<< HEAD
         `https://mini-link-management-platform-server.vercel.app/api/links/click/${shortLink}`
       ); // Revert to original URL
+=======
+        `${process.env.REACT_APP_BASE_URL}/api/links/click/${shortLink}`
+      );
+
+      // Update the clicks count in the local state
+>>>>>>> ce516eb (changes updated)
       const updatedLinks = links.map((link) =>
         link.shortLink === shortLink
           ? { ...link, clicks: link.clicks + 1 }
           : link
       );
       setLinks(updatedLinks);
-      localStorage.setItem(`${username}_links`, JSON.stringify(updatedLinks));
+
+      // Open the original URL in a new tab
       window.open(response.data.destinationUrl, "_blank");
     } catch (error) {
-      console.error("Failed to fetch destination URL:", error);
+      console.error("Failed to handle link click:", error);
     }
   };
 
@@ -249,6 +430,14 @@ const Links = forwardRef((props, ref) => {
 
     return () => clearInterval(interval);
   }, []);
+
+  if (isInitialLoad && isLoading) {
+    return (
+      <div className="loading-container">
+        <div className="loading-spinner">Loading links...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="links-container">
@@ -346,9 +535,14 @@ const Links = forwardRef((props, ref) => {
         <tbody>
           {sortedLinks.map((link) => (
             <tr
-              key={link.id}
-              data-id={link.id}
-              className={link.remarks.includes(searchTerm) ? "highlight" : ""}
+              key={link._id}
+              data-id={link._id}
+              className={
+                searchTerm &&
+                link.remarks.toLowerCase().includes(searchTerm.toLowerCase())
+                  ? "highlight"
+                  : ""
+              }
             >
               <td
                 style={{
@@ -383,6 +577,7 @@ const Links = forwardRef((props, ref) => {
                 <span
                   className="text-content"
                   onClick={() => handleLinkClick(link.shortLink)}
+                  style={{ cursor: "pointer" }}
                 >
                   {link.shortLink}
                 </span>
@@ -416,7 +611,7 @@ const Links = forwardRef((props, ref) => {
                 }}
                 className="clicks"
               >
-                {link.clicks}
+                {link.clicks || 0}
               </td>
               <td
                 style={{
@@ -425,11 +620,9 @@ const Links = forwardRef((props, ref) => {
                   textOverflow: "ellipsis",
                   whiteSpace: "nowrap",
                 }}
-                className={
-                  link.status === "Active" ? "status-active" : "status-inactive"
-                }
+                className={`status-${(link.status || "active").toLowerCase()}`}
               >
-                {link.status}
+                {link.status || "Active"}
               </td>
               <td
                 style={{
@@ -439,15 +632,18 @@ const Links = forwardRef((props, ref) => {
                   whiteSpace: "nowrap",
                 }}
               >
-                <button className="edit-btn" onClick={() => handleEdit(link)}>
-                  <img src="/assets/links-page-icons/edit.png" alt="edit" />
-                </button>
-                <button
-                  className="delete-btn"
-                  onClick={() => handleDelete(link.id)}
-                >
-                  <img src="/assets/links-page-icons/delete.png" alt="delete" />
-                </button>
+                <img
+                  src="/assets/links-page-icons/edit.png"
+                  alt="edit"
+                  onClick={() => handleEdit(link)}
+                  style={{ cursor: "pointer", marginRight: "10px" }}
+                />
+                <img
+                  src="/assets/links-page-icons/delete.png"
+                  alt="delete"
+                  onClick={() => handleDelete(link._id)}
+                  style={{ cursor: "pointer" }}
+                />
               </td>
             </tr>
           ))}
