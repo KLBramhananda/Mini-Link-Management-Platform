@@ -59,7 +59,7 @@ const CreateLink = ({ onClose, onSubmit, initialData, isEditMode }) => {
       try {
         // Get IP address from the backend
         const ipResponse = await axios.get(
-          `${process.env.REACT_APP_BASE_URL}/api/ip`
+          `https://mini-link-management-platform-backend-deploy.vercel.app/api/ip`
         );
         const ipAddress = ipResponse.data.ip;
 
