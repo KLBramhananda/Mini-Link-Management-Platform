@@ -137,6 +137,8 @@ exports.getAllLinks = async (req, res) => {
         analytics: 1,
       });
 
+    const currentTime = new Date();
+
     const formattedLinks = links.map((link) => ({
       _id: link._id,
       originalLink: link.originalLink,
@@ -146,7 +148,7 @@ exports.getAllLinks = async (req, res) => {
       clicks: link.clicks,
       createdAt: link.createdAt,
       status: link.expirationDate
-        ? new Date(link.expirationDate) > new Date()
+        ? new Date(link.expirationDate) > currentTime
           ? "Active"
           : "Inactive"
         : "Active",
