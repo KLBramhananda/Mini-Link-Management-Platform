@@ -124,7 +124,9 @@ exports.getAllLinks = async (req, res) => {
       return res.status(400).json({ error: "Invalid user ID" });
     }
 
+    // Optimize query with lean() and specific field selection
     const links = await Link.find({ userId: new ObjectId(userId) })
+      .lean()
       .sort({ createdAt: -1 })
       .select({
         originalLink: 1,
@@ -138,7 +140,6 @@ exports.getAllLinks = async (req, res) => {
       });
 
     const currentTime = new Date();
-
     const formattedLinks = links.map((link) => ({
       _id: link._id,
       originalLink: link.originalLink,

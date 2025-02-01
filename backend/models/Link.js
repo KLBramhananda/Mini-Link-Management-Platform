@@ -46,4 +46,6 @@ const linkSchema = new Schema({
   },
 });
 
+linkSchema.index({ userId: 1, createdAt: -1 });
+
 module.exports = mongoose.model("Link", linkSchema);

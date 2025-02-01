@@ -14,18 +14,29 @@ const Dashboard = () => {
   const processLinks = useCallback((linksData) => {
     // Update total links
     setTotalLinks(linksData.length);
-
-    // Process date-wise links
+  
+    // Process date-wise links with accumulated counts
     const linksByDate = linksData.reduce((acc, link) => {
       const date = new Date(link.createdAt).toLocaleDateString("en-US");
-      acc[date] = (acc[date] || 0) + 1;
+      acc[date] = (acc[date] || 0) + 1; // Count links per date
       return acc;
     }, {});
-
-    const dateWiseArray = Object.entries(linksByDate)
-      .map(([date, count]) => ({ date, count }))
-      .sort((a, b) => new Date(b.date) - new Date(a.date));
-
+  
+    // Convert to array and sort by date (oldest to newest)
+    const sortedDates = Object.entries(linksByDate)
+      .sort((a, b) => new Date(a[0]) - new Date(b[0]));
+  
+    // Calculate running total
+    let runningTotal = 0;
+    const dateWiseArray = sortedDates.map(([date, count]) => {
+      runningTotal += count;
+      return {
+        date,
+        count: runningTotal // Use accumulated total
+      };
+    });
+  
+    dateWiseArray.sort((a, b) => new Date(b.date) - new Date(a.date));
     setDateWiseLinks(dateWiseArray);
 
     // Process device-wise links
@@ -104,12 +115,12 @@ const Dashboard = () => {
     <>
       <div className="total-links">
         <h2>
-          Total Links <span>{totalLinks}</span>
+          Total Clicks <span>{totalLinks}</span>
         </h2>
       </div>
       <div className="charts">
         <div className="chart date-wise">
-          <h3>Links Created by Date</h3>
+          <h3>Date-wise Clicks</h3>
           <ul className="chart-bars">
             {dateWiseLinks.map((item) => (
               <li key={item.date}>
@@ -130,7 +141,7 @@ const Dashboard = () => {
           </ul>
         </div>
         <div className="chart devices">
-          <h3>Links Created by Device</h3>
+          <h3>Click Devices</h3>
           <ul className="chart-bars">
             {Object.entries(deviceWiseLinks).map(([device, count]) => (
               <li key={device}>
