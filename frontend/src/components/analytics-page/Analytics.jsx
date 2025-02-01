@@ -84,6 +84,8 @@ const Analytics = () => {
     return 0;
   });
 
+  //BRAMHANANDA K L
+
   return (
     <div className="analytics-container">
       <table className="analytics-table">

@@ -11,7 +11,6 @@ const Settings = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Fetch user data from localStorage or API
     const username = localStorage.getItem('username') || '';
     const userEmail = localStorage.getItem('email') || '';
     const userPhone = localStorage.getItem('phone') || '';
@@ -80,6 +79,8 @@ const Settings = () => {
   const handleCloseDeleteModal = () => {
     setShowDeleteModal(false);
   };
+
+//BRAMHANANDA K L
 
   return (
     <div className="settings-page">

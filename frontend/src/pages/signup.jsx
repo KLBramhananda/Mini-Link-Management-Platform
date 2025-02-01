@@ -23,7 +23,7 @@ const Signup = () => {
   };
 
   const axiosInstance = axios.create({
-    baseURL: `${process.env.REACT_APP_BASE_URL}/api`, // Revert to original URL
+    baseURL: `${process.env.REACT_APP_BASE_URL}/api`, 
     timeout: 5000,
     headers: {
       "Content-Type": "application/json",
@@ -53,9 +53,8 @@ const Signup = () => {
       localStorage.setItem("username", formData.username);
       localStorage.setItem("email", formData.email);
       localStorage.setItem("phone", formData.phone);
-      localStorage.setItem("userId", response.data.userId); // Make sure this is being sent from backend
+      localStorage.setItem("userId", response.data.userId);
 
-      // Force reload the application state
       window.dispatchEvent(new Event("storage"));
 
       navigate("/dashboard");

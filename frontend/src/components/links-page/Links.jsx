@@ -110,14 +110,14 @@ const Links = forwardRef((props, ref) => {
           }));
           setLinks(formattedLinks);
 
-          // Handle search if coming from search
+          
           if (location.state?.fromSearch && searchTerm) {
             const searchResult = formattedLinks.find((link) =>
               link.remarks.toLowerCase().includes(searchTerm.toLowerCase())
             );
 
             if (searchResult) {
-              // Calculate which page the result is on
+            
               const resultIndex = formattedLinks.indexOf(searchResult);
               const targetPage = Math.floor(resultIndex / linksPerPage) + 1;
 
@@ -225,7 +225,7 @@ const Links = forwardRef((props, ref) => {
         }
       } catch (error) {
         console.error("Error fetching links:", error.response?.data || error);
-        setLinks([]); // Clear links on error
+        setLinks([]); 
       } finally {
         setIsLoading(false);
       }
@@ -265,10 +265,8 @@ const Links = forwardRef((props, ref) => {
 
       console.log("Link created successfully:", response.data);
 
-      // Add new link to the beginning of the array
       setLinks((prevLinks) => [response.data.link, ...prevLinks]);
 
-      // Refresh the dashboard
       window.dispatchEvent(new Event("refreshDashboard"));
     } catch (error) {
       console.error("Link Creation Error:", error.response?.data || error);

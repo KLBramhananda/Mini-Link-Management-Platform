@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./login.css";
+
 //my login page bramha
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -28,7 +29,6 @@ const Login = () => {
       );
 
       if (response.data && response.data.user && response.data.user.id) {
-        // Clear any existing data first
         localStorage.clear();
 
         // Then set new user data
@@ -38,7 +38,6 @@ const Login = () => {
         localStorage.setItem("phone", response.data.user.phone);
         localStorage.setItem("userId", response.data.user.id);
 
-        // Force reload the application state
         window.dispatchEvent(new Event("storage"));
 
         navigate("/dashboard");
