@@ -13,7 +13,7 @@ const port = process.env.PORT || 5000;
 app.use(express.json());
 app.use(
   cors({
-    origin: [""],
+    origin: ["https://bramha-kl-mini-link-management-app.vercel.app"],
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization", "user-id"],
   })
