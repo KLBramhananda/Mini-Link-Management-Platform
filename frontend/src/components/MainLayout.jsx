@@ -104,7 +104,7 @@ const MainLayout = () => {
   }, []);
 
   const userInitials = username ? username.slice(0, 2).toUpperCase() : "BR";
-
+// my main layout here
   return (
     <div className="dashboard-container">
       <img className="logo" src="/assets/logo.png" alt="app-logo" />
