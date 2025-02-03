@@ -36,7 +36,9 @@ exports.createLink = async (req, res) => {
 
     // Generate a random 6-8 character alphanumeric string
     const randomString = Math.random().toString(36).substring(2, 10);
-    const shortLink = `https://bramha-mini-link-management-back.vercel.app/${randomString}`;
+
+    const backendURL = process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
+    const shortLink = `${backendURL}/${randomString}`; // just replace with your domain host : http://localhost:5000/
 
     const currentDate = new Date();
     const formattedDate = currentDate.toLocaleString("en-US", {
