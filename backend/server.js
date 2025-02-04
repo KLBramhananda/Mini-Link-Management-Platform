@@ -46,7 +46,8 @@ app.get("/", (req, res) => {
 
 app.get("/:shortUrl", async (req, res) => {
   try {
-    const shortLink = `http://localhost:5000/${req.params.shortUrl}`;
+    const shortLink = `http://localhost:5000/${req.params.shortUrl}`;  // here also we need to update the backend deploy url link ofter backend deploy(for public users or else it wont work).
+
     const link = await Link.findOne({ shortLink });
 
     if (!link) {
